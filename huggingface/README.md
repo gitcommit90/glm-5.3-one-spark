@@ -11,9 +11,9 @@ tags:
 - speculative-decoding
 - arm64
 - deployment
-base_model:
-- zai-org/GLM-5.3-Flash
-- turboderp/GLM-5.3-Flash-exl3
+base_model: zai-org/GLM-5.3-Flash
+base_model_relation: quantized
+quantized_by: turboderp
 ---
 
 # GLM-5.3-Flash EXL3 2.05 — One DGX Spark

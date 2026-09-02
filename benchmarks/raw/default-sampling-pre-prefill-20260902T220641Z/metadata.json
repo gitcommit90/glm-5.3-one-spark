@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "started_utc": "2026-09-02T22:06:42Z",
+  "base": "http://127.0.0.1:18080",
+  "model": "GLM-5.3-Flash-EXL3-2.05",
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "thinking": false,
+  "dflash_k": 7,
+  "max_tokens": 400,
+  "health": 200,
+  "idle": {
+    "running": 0,
+    "waiting": 0,
+    "utc": "2026-09-02T22:06:42Z"
+  },
+  "structured_prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text.",
+  "prose_prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough.",
+  "finished_utc": "2026-09-02T22:11:20Z",
+  "health_after": 200,
+  "idle_after": {
+    "running": 0,
+    "waiting": 0,
+    "utc": "2026-09-02T22:11:20Z"
+  }
+}

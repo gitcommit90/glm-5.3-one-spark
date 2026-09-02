@@ -1,0 +1,203 @@
+{
+  "runs": [
+    {
+      "id": "chatcmpl-aad7f766654f73a2",
+      "http": 200,
+      "t0": 522833.172916949,
+      "first": 522833.602979178,
+      "end": 522850.138392193,
+      "ttft_s": 0.4300622289883904,
+      "wall_s": 16.965475243981928,
+      "decode_s": 16.535413014993537,
+      "decode_tokens": 399,
+      "tok_s": 24.13002926737938,
+      "prompt_tokens": 40,
+      "completion_tokens": 400,
+      "finish_reason": "length",
+      "text_head": "# How a Hash Map Works: A Complete Guide\n\nA **hash map** (also called a hash table or dictionary) is a data structure that stores key-value pairs and can look up values by key in nearly constant time. Here's a thorough breakdown of how it works internally.\n\n## The Big Picture\n\nA hash map combines two ideas:\n1. **An array** \u2014 which offers fast O(1) access by index\n2. **A hash function** \u2014 which con",
+      "text_len": 1666,
+      "nan": false,
+      "spec": {
+        "drafts": 130,
+        "draft_tokens": 910,
+        "accepted": 269,
+        "accept_ratio": 0.2956043956043956,
+        "accepted_per_step": 2.0692307692307694,
+        "per_position": [
+          0.8,
+          0.5461538461538461,
+          0.33076923076923076,
+          0.18461538461538463,
+          0.1076923076923077,
+          0.06923076923076923,
+          0.03076923076923077
+        ]
+      },
+      "request_success_delta": 1.0,
+      "contaminated": false
+    },
+    {
+      "id": "chatcmpl-ad4c7edde8db91d8",
+      "http": 200,
+      "t0": 522850.459886933,
+      "first": 522850.88808175,
+      "end": 522863.285810445,
+      "ttft_s": 0.4281948170391843,
+      "wall_s": 12.825923512049485,
+      "decode_s": 12.3977286950103,
+      "decode_tokens": 399,
+      "tok_s": 32.18331436471787,
+      "prompt_tokens": 40,
+      "completion_tokens": 400,
+      "finish_reason": "length",
+      "text_head": "# How a Hash Map Works: A Comprehensive Guide\n\n## 1. Overview\n\nA hash map (also called hash table, dictionary, or associative array) is a data structure that stores key-value pairs and provides fast lookup, insertion, and deletion \u2014 ideally in **O(1) average time**. It works by using a **hash function** to convert a key into an index into an underlying array, where the value is stored.\n\n---\n\n## 2.",
+      "text_len": 1187,
+      "nan": false,
+      "spec": {
+        "drafts": 99,
+        "draft_tokens": 693,
+        "accepted": 304,
+        "accept_ratio": 0.43867243867243866,
+        "accepted_per_step": 3.0707070707070705,
+        "per_position": [
+          0.8080808080808081,
+          0.6868686868686869,
+          0.5353535353535354,
+          0.3838383838383838,
+          0.2828282828282828,
+          0.20202020202020202,
+          0.1717171717171717
+        ]
+      },
+      "request_success_delta": 1.0,
+      "contaminated": false
+    },
+    {
+      "id": "chatcmpl-b77ec804741fd4a8",
+      "http": 200,
+      "t0": 522863.605082177,
+      "first": 522864.036587021,
+      "end": 522880.282189565,
+      "ttft_s": 0.4315048440475948,
+      "wall_s": 16.677107388037257,
+      "decode_s": 16.245602543989662,
+      "decode_tokens": 399,
+      "tok_s": 24.560492534493086,
+      "prompt_tokens": 40,
+      "completion_tokens": 400,
+      "finish_reason": "length",
+      "text_head": "# How a Hash Map Works: A Complete Guide\n\nA hash map (also called a hash table or dictionary) is one of the most important data structures in computer science. It provides near-constant-time lookups, insertions, and deletions by using a clever trick: converting keys into array indices.\n\n## The Core Idea\n\nImagine you want to store phone numbers for your contacts. Instead of searching through a list",
+      "text_len": 1716,
+      "nan": false,
+      "spec": {
+        "drafts": 127,
+        "draft_tokens": 889,
+        "accepted": 272,
+        "accept_ratio": 0.3059617547806524,
+        "accepted_per_step": 2.141732283464567,
+        "per_position": [
+          0.7480314960629921,
+          0.5118110236220472,
+          0.3464566929133858,
+          0.2283464566929134,
+          0.16535433070866143,
+          0.07874015748031496,
+          0.06299212598425197
+        ]
+      },
+      "request_success_delta": 1.0,
+      "contaminated": false
+    },
+    {
+      "id": "chatcmpl-b7862af8e4a03116",
+      "http": 200,
+      "t0": 522880.605104181,
+      "first": 522881.032412305,
+      "end": 522896.95461364,
+      "ttft_s": 0.427308124024421,
+      "wall_s": 16.349509458988905,
+      "decode_s": 15.922201334964484,
+      "decode_tokens": 399,
+      "tok_s": 25.059348993647806,
+      "prompt_tokens": 40,
+      "completion_tokens": 400,
+      "finish_reason": "length",
+      "text_head": "# How a Hash Map Works: A Comprehensive Explanation\n\n## Overview\n\nA hash map (also called a hash table, dictionary, or associative array) is a data structure that stores **key-value pairs** and provides near-constant-time lookup, insertion, and deletion. It's one of the most important and widely used data structures in computer science \u2014 the foundation of everything from Python dicts to Redis to d",
+      "text_len": 1694,
+      "nan": false,
+      "spec": {
+        "drafts": 126,
+        "draft_tokens": 882,
+        "accepted": 274,
+        "accept_ratio": 0.31065759637188206,
+        "accepted_per_step": 2.1746031746031744,
+        "per_position": [
+          0.753968253968254,
+          0.5396825396825397,
+          0.3888888888888889,
+          0.23809523809523808,
+          0.1349206349206349,
+          0.07936507936507936,
+          0.03968253968253968
+        ]
+      },
+      "request_success_delta": 1.0,
+      "contaminated": false
+    },
+    {
+      "id": "chatcmpl-a5f3504c8a92cab8",
+      "http": 200,
+      "t0": 522897.278705583,
+      "first": 522897.71211714,
+      "end": 522911.416107936,
+      "ttft_s": 0.4334115569945425,
+      "wall_s": 14.137402352993377,
+      "decode_s": 13.703990795998834,
+      "decode_tokens": 399,
+      "tok_s": 29.11560624489739,
+      "prompt_tokens": 40,
+      "completion_tokens": 400,
+      "finish_reason": "length",
+      "text_head": "# How a Hash Map Works: A Comprehensive Guide\n\n## Overview\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-value pairs and provides fast lookup, insertion, and deletion\u2014typically in **O(1)** average time. It's one of the most fundamental data structures in computer science, powering everything from programming language runtimes to database indexes.\n\n---\n\n##",
+      "text_len": 1499,
+      "nan": false,
+      "spec": {
+        "drafts": 108,
+        "draft_tokens": 756,
+        "accepted": 298,
+        "accept_ratio": 0.3941798941798942,
+        "accepted_per_step": 2.759259259259259,
+        "per_position": [
+          0.8518518518518519,
+          0.6203703703703703,
+          0.48148148148148145,
+          0.3148148148148148,
+          0.2037037037037037,
+          0.1574074074074074,
+          0.12962962962962962
+        ]
+      },
+      "request_success_delta": 1.0,
+      "contaminated": false
+    }
+  ],
+  "summary": {
+    "runs": 5,
+    "median_tok_s": 25.059348993647806,
+    "median_ttft_s": 0.4300622289883904,
+    "median_accept_ratio": 0.31065759637188206,
+    "median_accepted_per_step": 2.1746031746031744,
+    "per_position_median": [
+      0.8,
+      0.5461538461538461,
+      0.3888888888888889,
+      0.23809523809523808,
+      0.16535433070866143,
+      0.07936507936507936,
+      0.06299212598425197
+    ],
+    "all_http_200": true,
+    "all_400_tokens": true,
+    "any_nan": false
+  }
+}

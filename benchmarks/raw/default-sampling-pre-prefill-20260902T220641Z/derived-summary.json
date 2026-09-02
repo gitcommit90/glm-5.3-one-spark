@@ -1,0 +1,96 @@
+{
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "thinking": false,
+    "dflash_k": 7
+  },
+  "concurrency": {
+    "C1": {
+      "rounds": 5,
+      "median_stream_tok_s": 62.637387849588876,
+      "median_aggregate_tok_s": 62.637387849588876,
+      "median_ttft_s": 0.40330258902395144,
+      "median_accept_ratio": 0.9587912087912088,
+      "median_accepted_per_step": 6.711538461538462,
+      "peak_running": 1,
+      "peak_waiting": 0,
+      "all_http_200": true,
+      "all_400_tokens": true,
+      "any_nan": false,
+      "median_sum_of_stream_decode_tok_s_mia_style": 62.637387849588876,
+      "per_round_sum_of_stream_decode_tok_s": [
+        62.69905860937496,
+        63.91231991947799,
+        62.23388078053874,
+        62.637387849588876,
+        60.80964721334992
+      ],
+      "median_wall_window_effective_tok_s": 62.637387849588876
+    },
+    "C2": {
+      "rounds": 5,
+      "median_stream_tok_s": 61.061769831666375,
+      "median_aggregate_tok_s": 58.667270063474504,
+      "median_ttft_s": 3.898227693483932,
+      "median_accept_ratio": 0.9433962264150944,
+      "median_accepted_per_step": 6.60377358490566,
+      "peak_running": 1,
+      "peak_waiting": 1,
+      "all_http_200": true,
+      "all_400_tokens": true,
+      "any_nan": false,
+      "median_sum_of_stream_decode_tok_s_mia_style": 122.12353966333275,
+      "per_round_sum_of_stream_decode_tok_s": [
+        126.30177344068525,
+        121.42528518728565,
+        122.12353966333275,
+        126.79125850985093,
+        119.54270772421263
+      ],
+      "median_wall_window_effective_tok_s": 58.667270063474504
+    },
+    "C4": {
+      "rounds": 5,
+      "median_stream_tok_s": 40.95776252799625,
+      "median_aggregate_tok_s": 91.47479279194307,
+      "median_ttft_s": 7.629465242527658,
+      "median_accept_ratio": 0.9560439560439561,
+      "median_accepted_per_step": 6.6923076923076925,
+      "peak_running": 3,
+      "peak_waiting": 3,
+      "all_http_200": true,
+      "all_400_tokens": true,
+      "any_nan": false,
+      "median_sum_of_stream_decode_tok_s_mia_style": 181.94387809618448,
+      "per_round_sum_of_stream_decode_tok_s": [
+        187.2136176429409,
+        181.94387809618448,
+        183.06717148896925,
+        167.95364075063307,
+        171.43164268819885
+      ],
+      "median_wall_window_effective_tok_s": 91.47479279194307
+    }
+  },
+  "prose": {
+    "runs": 5,
+    "median_tok_s": 25.059348993647806,
+    "median_ttft_s": 0.4300622289883904,
+    "median_accept_ratio": 0.31065759637188206,
+    "median_accepted_per_step": 2.1746031746031744,
+    "per_position_median": [
+      0.8,
+      0.5461538461538461,
+      0.3888888888888889,
+      0.23809523809523808,
+      0.16535433070866143,
+      0.07936507936507936,
+      0.06299212598425197
+    ],
+    "all_http_200": true,
+    "all_400_tokens": true,
+    "any_nan": false
+  },
+  "scope": "Completed decode concurrency and five-run prose only. No cold-prefill or prefix-cache requests were run."
+}

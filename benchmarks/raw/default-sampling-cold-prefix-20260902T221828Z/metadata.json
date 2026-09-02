@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "started_utc": "2026-09-02T22:18:28Z",
+  "base": "http://127.0.0.1:18080",
+  "model": "GLM-5.3-Flash-EXL3-2.05",
+  "max_model_len": 262144,
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "thinking": false,
+  "max_tokens": 16,
+  "targets": [
+    8000,
+    16000,
+    100000
+  ],
+  "pairs_each": 3,
+  "page_model_tokens": 3584,
+  "scope": "3 sequential unique cold/warm pairs at 8K, 16K, 100K plus 4 independently seeded concurrent 8K warm follow-ups",
+  "idle_before": {
+    "utc": "2026-09-02T22:18:28Z",
+    "running": 0,
+    "waiting": 0,
+    "gpu_cache_usage": null
+  },
+  "finished_utc": "2026-09-02T22:27:39Z",
+  "idle_after": {
+    "utc": "2026-09-02T22:27:39Z",
+    "running": 0,
+    "waiting": 0,
+    "gpu_cache_usage": null
+  },
+  "health_after": 200
+}

@@ -1,0 +1,92 @@
+{"target": 8000, "pair": 1, "cold": {"kind": "8000-cold-1", "http": 200, "prompt_tokens": 8002, "completion_tokens": 7, "ttft_s": 11.28622988902498, "prefill_tok_s": 709.0055827926516, "finish_reason": "stop", "text": "CK0114305A", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 8002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 8002.0, "vllm:prompt_tokens_total": 8002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "8000-warm-1", "http": 200, "prompt_tokens": 8025, "completion_tokens": 7, "ttft_s": 1.7737375300494023, "prefill_tok_s": 4524.34470379419, "finish_reason": "stop", "text": "CK0114305A", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 7168.0, "source:local_compute": 857.0, "vllm:prefix_cache_hits_total": 7168.0, "vllm:prefix_cache_queries_total": 8025.0, "vllm:prompt_tokens_total": 8025.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 8000, "pair": 2, "cold": {"kind": "8000-cold-2", "http": 200, "prompt_tokens": 8002, "completion_tokens": 6, "ttft_s": 10.102181435970124, "prefill_tok_s": 792.1061456595745, "finish_reason": "stop", "text": "CK02917223", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 8002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 8002.0, "vllm:prompt_tokens_total": 8002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "8000-warm-2", "http": 200, "prompt_tokens": 8024, "completion_tokens": 6, "ttft_s": 1.777102093969006, "prefill_tok_s": 4515.216107859667, "finish_reason": "stop", "text": "CK02917223", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 7168.0, "source:local_compute": 856.0, "vllm:prefix_cache_hits_total": 7168.0, "vllm:prefix_cache_queries_total": 8024.0, "vllm:prompt_tokens_total": 8024.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 8000, "pair": 3, "cold": {"kind": "8000-cold-3", "http": 200, "prompt_tokens": 8002, "completion_tokens": 7, "ttft_s": 10.175472225993872, "prefill_tok_s": 786.4008492459345, "finish_reason": "stop", "text": "CK03FB4B69", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 8002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 8002.0, "vllm:prompt_tokens_total": 8002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "8000-warm-3", "http": 200, "prompt_tokens": 8025, "completion_tokens": 7, "ttft_s": 1.7752078989869915, "prefill_tok_s": 4520.597280228081, "finish_reason": "stop", "text": "CK03FB4B69", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 7168.0, "source:local_compute": 857.0, "vllm:prefix_cache_hits_total": 7168.0, "vllm:prefix_cache_queries_total": 8025.0, "vllm:prompt_tokens_total": 8025.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 16000, "pair": 1, "cold": {"kind": "16000-cold-1", "http": 200, "prompt_tokens": 16002, "completion_tokens": 6, "ttft_s": 19.414960685011465, "prefill_tok_s": 824.2097555393814, "finish_reason": "stop", "text": "CK04EAFC51", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 16002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 16002.0, "vllm:prompt_tokens_total": 16002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "16000-warm-1", "http": 200, "prompt_tokens": 16024, "completion_tokens": 6, "ttft_s": 2.7840554710128345, "prefill_tok_s": 5755.632445847244, "finish_reason": "stop", "text": "CK04EAFC51", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 14336.0, "source:local_compute": 1688.0, "vllm:prefix_cache_hits_total": 14336.0, "vllm:prefix_cache_queries_total": 16024.0, "vllm:prompt_tokens_total": 16024.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 16000, "pair": 2, "cold": {"kind": "16000-cold-2", "http": 200, "prompt_tokens": 16002, "completion_tokens": 7, "ttft_s": 19.464166304038372, "prefill_tok_s": 822.1261445284687, "finish_reason": "stop", "text": "CK053F7009", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 16002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 16002.0, "vllm:prompt_tokens_total": 16002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "16000-warm-2", "http": 200, "prompt_tokens": 16025, "completion_tokens": 7, "ttft_s": 2.805071902985219, "prefill_tok_s": 5712.866034894095, "finish_reason": "stop", "text": "CK053F7009", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 14336.0, "source:local_compute": 1689.0, "vllm:prefix_cache_hits_total": 14336.0, "vllm:prefix_cache_queries_total": 16025.0, "vllm:prompt_tokens_total": 16025.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 16000, "pair": 3, "cold": {"kind": "16000-cold-3", "http": 200, "prompt_tokens": 16002, "completion_tokens": 7, "ttft_s": 19.56490290100919, "prefill_tok_s": 817.8931467722535, "finish_reason": "stop", "text": "CK06740CCE", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 16002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 16002.0, "vllm:prompt_tokens_total": 16002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "16000-warm-3", "http": 200, "prompt_tokens": 16025, "completion_tokens": 7, "ttft_s": 2.7857701160246506, "prefill_tok_s": 5752.448813999051, "finish_reason": "stop", "text": "CK06740CCE", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 14336.0, "source:local_compute": 1689.0, "vllm:prefix_cache_hits_total": 14336.0, "vllm:prefix_cache_queries_total": 16025.0, "vllm:prompt_tokens_total": 16025.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 100000, "pair": 1, "cold": {"kind": "100000-cold-1", "http": 200, "prompt_tokens": 100002, "completion_tokens": 7, "ttft_s": 124.12985969701549, "prefill_tok_s": 805.6240476231231, "finish_reason": "stop", "text": "CK070604BD", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 100002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 100002.0, "vllm:prompt_tokens_total": 100002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "100000-warm-1", "http": 200, "prompt_tokens": 100025, "completion_tokens": 7, "ttft_s": 9.499409595038742, "prefill_tok_s": 10529.601760959973, "finish_reason": "stop", "text": "CK070604BD", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 93184.0, "source:local_compute": 6841.0, "vllm:prefix_cache_hits_total": 93184.0, "vllm:prefix_cache_queries_total": 100025.0, "vllm:prompt_tokens_total": 100025.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 100000, "pair": 2, "cold": {"kind": "100000-cold-2", "http": 200, "prompt_tokens": 100002, "completion_tokens": 8, "ttft_s": 118.13498497696128, "prefill_tok_s": 846.5062235332101, "finish_reason": "stop", "text": "CK08C5268E", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 100002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 100002.0, "vllm:prompt_tokens_total": 100002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "100000-warm-2", "http": 200, "prompt_tokens": 100026, "completion_tokens": 8, "ttft_s": 8.82681911898544, "prefill_tok_s": 11332.055030430605, "finish_reason": "stop", "text": "CK08C5268E", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 93184.0, "source:local_compute": 6842.0, "vllm:prefix_cache_hits_total": 93184.0, "vllm:prefix_cache_queries_total": 100026.0, "vllm:prompt_tokens_total": 100026.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"target": 100000, "pair": 3, "cold": {"kind": "100000-cold-3", "http": 200, "prompt_tokens": 100002, "completion_tokens": 8, "ttft_s": 118.2501600770047, "prefill_tok_s": 845.681730450754, "finish_reason": "stop", "text": "CK092323A9", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 100002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 100002.0, "vllm:prompt_tokens_total": 100002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}, "warm": {"kind": "100000-warm-3", "http": 200, "prompt_tokens": 100026, "completion_tokens": 8, "ttft_s": 8.84216286498122, "prefill_tok_s": 11312.390591237143, "finish_reason": "stop", "text": "CK092323A9", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 93184.0, "source:local_compute": 6842.0, "vllm:prefix_cache_hits_total": 93184.0, "vllm:prefix_cache_queries_total": 100026.0, "vllm:prompt_tokens_total": 100026.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"concurrent_seed": 1, "cold": {"kind": "concurrent-seed-1-cold", "http": 200, "prompt_tokens": 8002, "completion_tokens": 7, "ttft_s": 10.2516155539779, "prefill_tok_s": 780.5598988634539, "finish_reason": "stop", "text": "CK1062A785", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 8002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 8002.0, "vllm:prompt_tokens_total": 8002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"concurrent_seed": 2, "cold": {"kind": "concurrent-seed-2-cold", "http": 200, "prompt_tokens": 8002, "completion_tokens": 6, "ttft_s": 10.222740721015725, "prefill_tok_s": 782.7646438835754, "finish_reason": "stop", "text": "CK11535EEB", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 8002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 8002.0, "vllm:prompt_tokens_total": 8002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"concurrent_seed": 3, "cold": {"kind": "concurrent-seed-3-cold", "http": 200, "prompt_tokens": 8002, "completion_tokens": 7, "ttft_s": 10.225798979983665, "prefill_tok_s": 782.5305402211987, "finish_reason": "stop", "text": "CK1299133C", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 8002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 8002.0, "vllm:prompt_tokens_total": 8002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"concurrent_seed": 4, "cold": {"kind": "concurrent-seed-4-cold", "http": 200, "prompt_tokens": 8002, "completion_tokens": 7, "ttft_s": 10.220759614021517, "prefill_tok_s": 782.9163684685749, "finish_reason": "stop", "text": "CK1387399E", "correct": true, "nan": false, "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 0.0, "source:local_compute": 8002.0, "vllm:prefix_cache_hits_total": 0.0, "vllm:prefix_cache_queries_total": 8002.0, "vllm:prompt_tokens_total": 8002.0, "vllm:request_success_total": 1.0}, "gpu_cache_usage_after": null, "contaminated": false}}
+{"concurrent_8k": {"warms": [{"kind": "concurrent-warm-1", "http": 200, "prompt_tokens": 8025, "completion_tokens": 7, "ttft_s": 4.82947251398582, "prefill_tok_s": 1661.672155035597, "finish_reason": "stop", "text": "CK1062A785", "correct": true, "nan": false, "metrics_delta": null, "gpu_cache_usage_after": null, "contaminated": null}, {"kind": "concurrent-warm-2", "http": 200, "prompt_tokens": 8024, "completion_tokens": 6, "ttft_s": 11.7499610199593, "prefill_tok_s": 682.8958824944079, "finish_reason": "stop", "text": "CK11535EEB", "correct": true, "nan": false, "metrics_delta": null, "gpu_cache_usage_after": null, "contaminated": null}, {"kind": "concurrent-warm-3", "http": 200, "prompt_tokens": 8025, "completion_tokens": 7, "ttft_s": 11.751125423994381, "prefill_tok_s": 682.9133134443376, "finish_reason": "stop", "text": "CK1299133C", "correct": true, "nan": false, "metrics_delta": null, "gpu_cache_usage_after": null, "contaminated": null}, {"kind": "concurrent-warm-4", "http": 200, "prompt_tokens": 8025, "completion_tokens": 7, "ttft_s": 11.751532624999527, "prefill_tok_s": 682.8896498936728, "finish_reason": "stop", "text": "CK1387399E", "correct": true, "nan": false, "metrics_delta": null, "gpu_cache_usage_after": null, "contaminated": null}], "metrics_delta": {"source:external_kv_transfer": 0.0, "source:local_cache_hit": 28672.0, "source:local_compute": 3427.0, "vllm:prefix_cache_hits_total": 28672.0, "vllm:prefix_cache_queries_total": 32099.0, "vllm:prompt_tokens_total": 32099.0, "vllm:request_success_total": 4.0}, "all_correct": true}}
+FINAL {
+  "targets": {
+    "8000": {
+      "pairs": 3,
+      "median_prompt_tokens_cold": 8002,
+      "median_cold_ttft_s": 10.175472225993872,
+      "median_cold_prefill_tok_s": 786.4008492459345,
+      "cold_hits": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "median_warm_prompt_tokens": 8025,
+      "median_warm_ttft_s": 1.7752078989869915,
+      "warm_hits": [
+        7168.0,
+        7168.0,
+        7168.0
+      ],
+      "warm_hit_ratio_median": 0.893208722741433,
+      "all_correct": true,
+      "all_http_200": true,
+      "any_nan": false
+    },
+    "16000": {
+      "pairs": 3,
+      "median_prompt_tokens_cold": 16002,
+      "median_cold_ttft_s": 19.464166304038372,
+      "median_cold_prefill_tok_s": 822.1261445284687,
+      "cold_hits": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "median_warm_prompt_tokens": 16025,
+      "median_warm_ttft_s": 2.7857701160246506,
+      "warm_hits": [
+        14336.0,
+        14336.0,
+        14336.0
+      ],
+      "warm_hit_ratio_median": 0.8946021840873635,
+      "all_correct": true,
+      "all_http_200": true,
+      "any_nan": false
+    },
+    "100000": {
+      "pairs": 3,
+      "median_prompt_tokens_cold": 100002,
+      "median_cold_ttft_s": 118.2501600770047,
+      "median_cold_prefill_tok_s": 845.681730450754,
+      "cold_hits": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "median_warm_prompt_tokens": 100026,
+      "median_warm_ttft_s": 8.84216286498122,
+      "warm_hits": [
+        93184.0,
+        93184.0,
+        93184.0
+      ],
+      "warm_hit_ratio_median": 0.9315977845760103,
+      "all_correct": true,
+      "all_http_200": true,
+      "any_nan": false
+    }
+  },
+  "concurrent_8k": {
+    "ttft_min_s": 4.82947251398582,
+    "ttft_max_s": 11.751532624999527,
+    "aggregate_hits": 28672.0,
+    "aggregate_prompt_tokens": 32099,
+    "all_correct": true,
+    "all_http_200": true
+  }
+}

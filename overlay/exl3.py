@@ -14,6 +14,7 @@ runner all-reduces the combined output.
 from __future__ import annotations
 
 import importlib
+import json
 import importlib.util
 import os
 import sys
@@ -30,7 +31,8 @@ from vllm.model_executor.layers.fused_moe.config import FusedMoEQuantConfig
 from vllm.model_executor.layers.fused_moe.fused_moe_method_base import (
     FusedMoEMethodBase,
 )
-from vllm.model_executor.layers.linear import LinearBase, UnquantizedLinearMethod
+from vllm.model_executor.layers.linear import (LinearBase, LinearMethodBase, UnquantizedLinearMethod)
+from vllm.model_executor.layers.vocab_parallel_embedding import ParallelLMHead
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig
 from vllm.model_executor.layers.quantization import register_quantization_config
 from vllm.model_executor.utils import set_weight_attrs
@@ -47,7 +49,7 @@ EXLLAMAV3_COMMIT = "c5d9c657966ffeeaa9353f0cc899f18629da4a13"
 EXLLAMAV3_VERSION = "0.0.43"
 MCG_MULTIPLIER = 0xCBAC1FED
 MCG_MARKER_SIGNED_INT32 = -877912083
-EXL3_SUFFIXES = ("trellis", "suh", "svh", "mcg")
+EXL3_SUFFIXES = ("trellis", "suh", "svh", "mcg", "mul1")
 SWIGLU_LIMIT_DEFAULT = 10.0
 # Default fused-kernel temp rows/expert. 1024 covers MNBT=1024 in one launch
 # but measured slower than 128+fallback (P2b). Override with EXL3_TEMP_ROWS_FUSED.
@@ -138,6 +140,7 @@ _EXL3_FAT_DIAG: dict[str, Any] = {
 }
 _FAT_SCRATCH_BYTES: dict[tuple, int] = {}
 _exl3_fat_tier_logged = False
+_EXL3_PREFIX_DIAG: set[str] = set()
 
 
 def fused_moe_row_tile_enabled() -> bool:
@@ -549,16 +552,29 @@ def make_linear_exl3(
 ):
     """Build a LinearEXL3 over already-sharded packed tensors. No BF16 expand."""
     cls = load_linear_exl3_cls()
+    marker = mcg.contiguous()
+    marker_value = int(marker.reshape(-1)[0].item())
+    marker_kwargs = (
+        {"mcg": marker}
+        if marker_value == MCG_MARKER_SIGNED_INT32
+        else {"mul1": marker}
+    )
+    # vLLM uses only LinearEXL3's low-row kernel path here. Supply the minimal
+    # config contract directly instead of asking ExLlamaV3 to import NullConfig;
+    # this namespace is intentionally synthetic to avoid package serving extras.
+    linear_config = types.SimpleNamespace(
+        infer_params=types.SimpleNamespace(no_reconstruct=False)
+    )
     return cls(
-        config=None,
+        config=linear_config,
         in_features=int(suh.numel()),
         out_features=int(svh.numel()),
         trellis=trellis.contiguous(),
         suh=suh.contiguous(),
         svh=svh.contiguous(),
-        mcg=mcg.contiguous(),
         out_dtype=out_dtype,
         transformers_fix=True,
+        **marker_kwargs,
     )
 
 
@@ -957,9 +973,30 @@ def build_exl3_fused_state(layer: torch.nn.Module, inners: list[dict[str, Any]])
     _EXL3_FAT_DIAG["fused_temps_bytes"] = sum(
         t.numel() * t.element_size() for t in temps
     )
+    # exl3_moe needs the checkpoint codebook flags exactly as LinearEXL3
+    # decoded them. Hard-coding MCG silently corrupts mul1 checkpoints such as
+    # GLM-5.3-Flash EXL3 2.05 (all three projections are mul1).
+    first = inners[0]
+    flags = (
+        bool(first["gate"].mcg), bool(first["gate"].mul1),
+        bool(first["up"].mcg), bool(first["up"].mul1),
+        bool(first["down"].mcg), bool(first["down"].mul1),
+    )
+    for pack in inners[1:]:
+        current = (
+            bool(pack["gate"].mcg), bool(pack["gate"].mul1),
+            bool(pack["up"].mcg), bool(pack["up"].mul1),
+            bool(pack["down"].mcg), bool(pack["down"].mul1),
+        )
+        if current != flags:
+            raise RuntimeError(
+                f"EXL3 fused MoE requires uniform codebook flags; "
+                f"first={flags} current={current}"
+            )
     layer._exl3_fused_temps = temps
     layer._exl3_fused_concurrency = concurrency
-    layer._exl3_k = int(layer._exl3_bits)
+    layer._exl3_k = int(first["gate"].K)
+    layer._exl3_codebook_flags = flags
 
 
 def _exl3_moe_launch(
@@ -972,6 +1009,7 @@ def _exl3_moe_launch(
     temps: tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor],
     ptrs: dict[str, torch.Tensor],
     k: int,
+    codebook_flags: tuple[bool, bool, bool, bool, bool, bool],
     limit: float,
     n_active_host: int | None,
 ) -> None:
@@ -998,12 +1036,7 @@ def _exl3_moe_launch(
         ptrs["down_trellis"],
         ptrs["down_suh"],
         ptrs["down_svh"],
-        True,
-        False,
-        True,
-        False,
-        True,
-        False,
+        *codebook_flags,
         float(limit),
     )
     if n_active_host is not None:
@@ -1022,6 +1055,7 @@ def _exl3_moe_row_tiles(
     temps: tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor],
     ptrs: dict[str, torch.Tensor],
     k: int,
+    codebook_flags: tuple[bool, bool, bool, bool, bool, bool],
     limit: float,
     n_active_host: int | None,
     max_rows: int,
@@ -1062,6 +1096,7 @@ def _exl3_moe_row_tiles(
             temps,
             ptrs,
             k,
+            codebook_flags,
             limit,
             n_active_host,
         )
@@ -1112,6 +1147,9 @@ def apply_exl3_fused_moe(
     # -1 = unknown active count: max-concurrency grid, no .item() host sync.
     n_active_host = -1 if _exl3_moe_accepts_num_active(fn) else None
     k = int(getattr(layer, "_exl3_k", 4))
+    codebook_flags = getattr(layer, "_exl3_codebook_flags", None)
+    if codebook_flags is None:
+        raise RuntimeError("EXL3 fused codebook flags were not built after weight load")
     # Actual kernel cap is the allocated temp dim1 (env-selected at load).
     cap = int(temps[0].shape[1])
 
@@ -1123,7 +1161,7 @@ def apply_exl3_fused_moe(
     if tokens <= cap:
         _exl3_moe_launch(
             fn, xh, out, expert_count, token_sorted, weight_sorted,
-            temps, ptrs, k, limit, n_active_host,
+            temps, ptrs, k, codebook_flags, limit, n_active_host,
         )
         return out
 
@@ -1146,7 +1184,7 @@ def apply_exl3_fused_moe(
         counts_cpu, count_stream = _stage_counts_to_host(counts)
         _exl3_moe_launch(
             fn, xh, out, expert_count, token_sorted, weight_sorted,
-            temps, ptrs, k, limit, n_active_host,
+            temps, ptrs, k, codebook_flags, limit, n_active_host,
         )
         launched = True
         count_stream.synchronize()
@@ -1169,7 +1207,7 @@ def apply_exl3_fused_moe(
         if not launched:
             _exl3_moe_launch(
                 fn, xh, out, expert_count, token_sorted, weight_sorted,
-                temps, ptrs, k, limit, n_active_host,
+                temps, ptrs, k, codebook_flags, limit, n_active_host,
             )
         return out
 
@@ -1180,14 +1218,14 @@ def apply_exl3_fused_moe(
         _record_exl3_fat_reason("row_tile_preempts_fat")
         _exl3_moe_row_tiles(
             fn, xh, out, counts, token_sorted, weight_sorted,
-            temps, ptrs, k, limit, n_active_host, max_rows,
+            temps, ptrs, k, codebook_flags, limit, n_active_host, max_rows,
         )
         return out
 
     if not launched:
         _exl3_moe_launch(
             fn, xh, out, expert_count, token_sorted, weight_sorted,
-            temps, ptrs, k, limit, n_active_host,
+            temps, ptrs, k, codebook_flags, limit, n_active_host,
         )
     if use_batched_fat:
         if use_fat_kernel:
@@ -1293,22 +1331,21 @@ class Exl3Config(QuantizationConfig):
 
     def __init__(
         self,
-        bits: int = 4,
+        bits: float = 4,
         codebook: str = "mcg",
         scope: str = "glm53_routed_experts_only",
         **kwargs: Any,
     ) -> None:
         super().__init__()
-        self.bits = int(bits)
+        self.bits = float(bits)
         self.codebook = str(codebook)
         self.scope = str(scope)
         self.raw_config = dict(kwargs)
-        if self.codebook != "mcg":
-            raise ValueError(
-                f"this overlay only implements codebook=mcg; got {self.codebook!r}"
-            )
-        if self.bits not in (3, 4, 5, 6):
+        if self.codebook not in ("mcg", "mul1"):
+            raise ValueError(f"unsupported EXL3 codebook={self.codebook!r}")
+        if not (1.0 <= self.bits <= 8.0):
             raise ValueError(f"unsupported EXL3 bits={self.bits}")
+        self.tensor_storage = self.raw_config.pop("tensor_storage", {})
 
     def get_name(self) -> str:
         return "exl3"
@@ -1332,15 +1369,40 @@ class Exl3Config(QuantizationConfig):
             "codebook",
             "scope",
             "quant_method",
-            # tr3 ships a 37 MiB per-tensor ledger; keep it off the config object.
-            "tensor_storage",
         }
         return cls(
-            bits=int(config.get("bits", 4)),
+            bits=float(config.get("bits", 4)),
             codebook=str(config.get("codebook", "mcg")),
             scope=str(config.get("scope", "glm53_routed_experts_only")),
             **{k: v for k, v in config.items() if k not in skip},
         )
+
+    def maybe_update_config(
+        self,
+        model_name: str,
+        hf_config: Any = None,
+        revision: str | None = None,
+    ) -> None:
+        """Load the per-tensor EXL3 ledger omitted from config.json.
+
+        vLLM prefers the embedded quantization_config, while ExLlamaV3 keeps
+        tensor_storage only in quantization_config.json to avoid bloating the
+        Transformers config. The ledger is required to distinguish packed
+        full-model linears from native tensors and to recover per-tensor K.
+        """
+        del hf_config, revision
+        if self.tensor_storage:
+            return
+        path = os.path.join(model_name, "quantization_config.json")
+        if not os.path.isfile(path):
+            raise ValueError(f"EXL3 tensor_storage ledger missing: {path}")
+        with open(path, encoding="utf-8") as f:
+            external = json.load(f)
+        ledger = external.get("tensor_storage")
+        if not isinstance(ledger, dict) or not ledger:
+            raise ValueError(f"EXL3 tensor_storage ledger is empty: {path}")
+        self.tensor_storage = ledger
+        logger.info("EXL3 loaded per-tensor ledger: %d entries from %s", len(ledger), path)
 
     @classmethod
     def override_quantization_method(
@@ -1359,9 +1421,186 @@ class Exl3Config(QuantizationConfig):
 
         if isinstance(layer, RoutedExperts):
             return Exl3MoEMethod(layer.moe_config, self)
-        if isinstance(layer, LinearBase):
+        if isinstance(layer, (LinearBase, ParallelLMHead)):
+            logical = self.resolve_linear_entries(prefix)
+            if len(_EXL3_PREFIX_DIAG) < 100 and (
+                "layers.0" in prefix or "lm_head" in prefix
+            ):
+                _EXL3_PREFIX_DIAG.add(prefix)
+                logger.warning(
+                    "EXL3 prefix diag prefix=%r resolved=%s ledger=%d",
+                    prefix, [x[0] for x in logical], len(self.tensor_storage),
+                )
+            if logical:
+                return Exl3LinearMethod(self, prefix, logical)
             return UnquantizedLinearMethod()
         return None
+
+    def resolve_linear_entries(self, prefix: str) -> list[tuple[str, dict[str, Any]]]:
+        """Resolve a vLLM LinearBase prefix to one or more EXL3 checkpoint matrices.
+
+        TP1 is the One-Spark target. MergedColumnParallelLinear uses gate_up_proj
+        while the checkpoint stores gate_proj/up_proj separately.
+        """
+        candidates: list[str]
+        if prefix.endswith(".gate_up_proj"):
+            stem = prefix[: -len("gate_up_proj")]
+            candidates = [stem + "gate_proj", stem + "up_proj"]
+        elif prefix.endswith(".fused_qkv_a_proj"):
+            stem = prefix[: -len("fused_qkv_a_proj")]
+            candidates = [stem + "q_a_proj", stem + "kv_a_proj_with_mqa"]
+        elif prefix.endswith(".qkv_proj") and "visual" in prefix:
+            stem = prefix[: -len("qkv_proj")]
+            candidates = [stem + "q_proj", stem + "k_proj", stem + "v_proj"]
+        else:
+            candidates = [prefix]
+        out = []
+        for key in candidates:
+            short = key
+            if "layers." in short:
+                short = short[short.index("layers."):]
+            else:
+                for root in ("model.language_model.", "language_model.", "model."):
+                    if short.startswith(root):
+                        short = short[len(root):]
+                        break
+            aliases = (
+                key,
+                short,
+                "model." + short,
+                "language_model." + short,
+                "model.language_model." + short,
+            )
+            resolved = next((a for a in aliases if a in self.tensor_storage), None)
+            if resolved is None:
+                return []
+            entry = self.tensor_storage[resolved]
+            if entry.get("quant_format") != "exl3":
+                return []
+            out.append((resolved, entry))
+        return out
+
+
+class Exl3LinearMethod(LinearMethodBase):
+    """Full-checkpoint EXL3 linear method for TP1, including mul1 codebooks."""
+
+    def __init__(self, quant_config: Exl3Config, prefix: str,
+                 logical: list[tuple[str, dict[str, Any]]]) -> None:
+        self.quant_config = quant_config
+        self.prefix = prefix
+        self.logical = logical
+
+    def create_weights(self, layer: torch.nn.Module, input_size_per_partition: int,
+                       output_partition_sizes: list[int], input_size: int,
+                       output_size: int, params_dtype: torch.dtype,
+                       **extra_weight_attrs) -> None:
+        del params_dtype, input_size, output_size
+        from vllm.distributed import get_tensor_model_parallel_world_size
+        if get_tensor_model_parallel_world_size() != 1:
+            raise NotImplementedError("general EXL3 linear path currently targets One-Spark TP1")
+        n = len(self.logical)
+        if len(output_partition_sizes) != n:
+            raise RuntimeError(
+                f"EXL3 logical partition mismatch for {self.prefix}: "
+                f"ledger={n} vLLM={len(output_partition_sizes)}"
+            )
+        specs = []
+        for (key, entry), out_features in zip(self.logical, output_partition_sizes):
+            st = entry["stored_tensors"]
+            shapes = {name.rsplit(".", 1)[-1]: tuple(meta["shape"])
+                      for name, meta in st.items()}
+            required = {"trellis", "suh", "svh", self.quant_config.codebook}
+            if not required.issubset(shapes):
+                raise RuntimeError(f"incomplete EXL3 ledger for {key}: {sorted(shapes)}")
+            if shapes["suh"] != (input_size_per_partition,) or shapes["svh"] != (out_features,):
+                raise RuntimeError(
+                    f"EXL3 shape mismatch for {key}: suh={shapes['suh']} svh={shapes['svh']} "
+                    f"expected {(input_size_per_partition,)} {(out_features,)}"
+                )
+            specs.append(shapes)
+        first = specs[0]
+        heterogeneous = any(
+            spec["trellis"] != first["trellis"]
+            or spec["suh"] != first["suh"]
+            or spec["svh"] != first["svh"]
+            for spec in specs[1:]
+        )
+        def alloc(name: str, dtype: torch.dtype):
+            shapes = [spec[name] for spec in specs]
+            if n > 1 and heterogeneous:
+                numels = [int(torch.Size(shape).numel()) for shape in shapes]
+                full_shape = (sum(numels),)
+            else:
+                full_shape = ((n,) + shapes[0]) if n > 1 else shapes[0]
+            p = Parameter(torch.empty(full_shape, dtype=dtype), requires_grad=False)
+            p.weight_loader = self._load
+            p._exl3_suffix = name
+            if n > 1 and heterogeneous:
+                p._exl3_shapes = shapes
+                offsets = [0]
+                for size in numels:
+                    offsets.append(offsets[-1] + size)
+                p._exl3_offsets = offsets
+            layer.register_parameter(name, p)
+            return p
+        alloc("trellis", torch.int16)
+        alloc("suh", torch.float16)
+        alloc("svh", torch.float16)
+        alloc(self.quant_config.codebook, torch.int32)
+        layer._exl3_logical_count = n
+        layer._exl3_output_partitions = list(output_partition_sizes)
+
+    def _load(self, param: Parameter, loaded_weight: torch.Tensor,
+              shard_id: int | str | None = None, *args, **kwargs):
+        del args, kwargs
+        if isinstance(shard_id, str):
+            shard_id = {"q": 0, "k": 1, "v": 2}.get(shard_id, shard_id)
+        shapes = getattr(param, "_exl3_shapes", None)
+        if shapes is not None:
+            if not isinstance(shard_id, int):
+                raise RuntimeError(f"missing EXL3 shard_id for merged {self.prefix}")
+            offsets = param._exl3_offsets
+            dest = param.data[offsets[shard_id]:offsets[shard_id + 1]].view(shapes[shard_id])
+        else:
+            merged = param.dim() > loaded_weight.dim()
+            if merged:
+                if not isinstance(shard_id, int):
+                    raise RuntimeError(f"missing EXL3 shard_id for merged {self.prefix}")
+                dest = param.data[shard_id]
+            else:
+                dest = param.data
+        if tuple(dest.shape) != tuple(loaded_weight.shape):
+            raise RuntimeError(
+                f"EXL3 linear load mismatch {self.prefix}.{param._exl3_suffix}: "
+                f"dest={tuple(dest.shape)} loaded={tuple(loaded_weight.shape)} shard={shard_id}"
+            )
+        dest.copy_(loaded_weight)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+        n = int(layer._exl3_logical_count)
+        marker = getattr(layer, self.quant_config.codebook)
+        inners = []
+        def pick(param: Parameter, i: int):
+            shapes = getattr(param, "_exl3_shapes", None)
+            if shapes is not None:
+                offsets = param._exl3_offsets
+                return param[offsets[i]:offsets[i + 1]].view(shapes[i])
+            return param[i] if n > 1 else param
+        for i in range(n):
+            inners.append(make_linear_exl3(
+                pick(layer.trellis, i), pick(layer.suh, i),
+                pick(layer.svh, i), pick(marker, i),
+            ))
+        layer._exl3_linear_inners = inners
+
+    def apply(self, layer: torch.nn.Module, x: torch.Tensor,
+              bias: torch.Tensor | None = None) -> torch.Tensor:
+        ys = [inner.forward(x.contiguous().half(), {}, out_dtype=x.dtype)
+              for inner in layer._exl3_linear_inners]
+        y = ys[0] if len(ys) == 1 else torch.cat(ys, dim=-1)
+        if bias is not None:
+            y = y + bias
+        return y
 
 
 class Exl3MoEMethod(FusedMoEMethodBase):
@@ -1370,7 +1609,7 @@ class Exl3MoEMethod(FusedMoEMethodBase):
     def __init__(self, moe, quant_config: Exl3Config) -> None:
         super().__init__(moe)
         self.quant_config = quant_config
-        self.bits = quant_config.bits
+        self.bits = int(quant_config.bits)
         self._logged = False
 
     def get_fused_moe_quant_config(self, layer: "RoutedExperts") -> FusedMoEQuantConfig | None:
@@ -1440,15 +1679,16 @@ class Exl3MoEMethod(FusedMoEMethodBase):
             requires_grad=False,
         )
 
+        marker_suffix = self.quant_config.codebook
         packed = {
             "w13_trellis": w13_trellis,
             "w13_suh": w13_suh,
             "w13_svh": w13_svh,
-            "w13_mcg": w13_mcg,
+            f"w13_{marker_suffix}": w13_mcg,
             "w2_trellis": w2_trellis,
             "w2_suh": w2_suh,
             "w2_svh": w2_svh,
-            "w2_mcg": w2_mcg,
+            f"w2_{marker_suffix}": w2_mcg,
         }
         for name, param in packed.items():
             layer.register_parameter(name, param)
@@ -1493,6 +1733,8 @@ class Exl3MoEMethod(FusedMoEMethodBase):
         tp_size = get_tensor_model_parallel_world_size()
         suffix = _suffix_from_mapped_name(weight_name)
         loaded = loaded_weight.detach().contiguous()
+        if loaded.ndim == 0:
+            loaded = loaded.reshape(1)
 
         if shard_id in ("w1", "w3"):
             shard_idx = 0 if shard_id == "w1" else 1
@@ -1517,27 +1759,21 @@ class Exl3MoEMethod(FusedMoEMethodBase):
         if not hasattr(layer, "w13_trellis"):
             return
         # Bind owner for any late loads; stitch LinearEXL3 handles.
+        marker_suffix = self.quant_config.codebook
+        marker13_name = f"w13_{marker_suffix}"
+        marker2_name = f"w2_{marker_suffix}"
         for name in (
-            "w13_trellis",
-            "w13_suh",
-            "w13_svh",
-            "w13_mcg",
-            "w2_trellis",
-            "w2_suh",
-            "w2_svh",
-            "w2_mcg",
+            "w13_trellis", "w13_suh", "w13_svh", marker13_name,
+            "w2_trellis", "w2_suh", "w2_svh", marker2_name,
         ):
             getattr(layer, name)._exl3_owner = layer
-
-        mcg13 = layer.w13_mcg.reshape(-1)
-        mcg2 = layer.w2_mcg.reshape(-1)
-        if not torch.all(mcg13 == MCG_MARKER_SIGNED_INT32) or not torch.all(
-            mcg2 == MCG_MARKER_SIGNED_INT32
+        marker13 = getattr(layer, marker13_name)
+        marker2 = getattr(layer, marker2_name)
+        if marker_suffix == "mcg" and (
+            not torch.all(marker13.reshape(-1) == MCG_MARKER_SIGNED_INT32)
+            or not torch.all(marker2.reshape(-1) == MCG_MARKER_SIGNED_INT32)
         ):
-            raise RuntimeError(
-                "EXL3 mcg marker is not the MCG int32 0xCBAC1FED / "
-                f"{MCG_MARKER_SIGNED_INT32}; packed ABI mismatch"
-            )
+            raise RuntimeError("EXL3 MCG marker packed ABI mismatch")
 
         n_exp = int(layer.w13_trellis.shape[0])
         layer._exl3_shared_w13_suh = bool(
@@ -1550,19 +1786,19 @@ class Exl3MoEMethod(FusedMoEMethodBase):
                 layer.w13_trellis[e, 0],
                 layer.w13_suh[e, 0],
                 layer.w13_svh[e, 0],
-                layer.w13_mcg[e, 0],
+                marker13[e, 0],
             )
             up = make_linear_exl3(
                 layer.w13_trellis[e, 1],
                 layer.w13_suh[e, 1],
                 layer.w13_svh[e, 1],
-                layer.w13_mcg[e, 1],
+                marker13[e, 1],
             )
             down = make_linear_exl3(
                 layer.w2_trellis[e],
                 layer.w2_suh[e],
                 layer.w2_svh[e],
-                layer.w2_mcg[e],
+                marker2[e],
             )
             inners.append({"gate": gate, "up": up, "down": down})
         layer._exl3_inners = inners
@@ -1583,10 +1819,11 @@ class Exl3MoEMethod(FusedMoEMethodBase):
         if not self._logged:
             if fused_ok:
                 logger.info(
-                    "EXL3 MCG trellis engaged for routed experts: bits=%s "
+                    "EXL3 %s trellis engaged for routed experts: bits=%s "
                     "experts_local=%s hidden=%s intermediate_local=%s "
                     "fused_moe=exl3_moe concurrency=%s "
                     "(no BF16 expert reconstruct at load)",
+                    self.quant_config.codebook,
                     self.bits,
                     n_exp,
                     layer._exl3_hidden_size,
@@ -1595,10 +1832,11 @@ class Exl3MoEMethod(FusedMoEMethodBase):
                 )
             else:
                 logger.info(
-                    "EXL3 MCG trellis engaged for routed experts: bits=%s "
+                    "EXL3 %s trellis engaged for routed experts: bits=%s "
                     "experts_local=%s hidden=%s intermediate_local=%s "
                     "fused_moe=python_loop (%s) "
                     "(no BF16 expert reconstruct at load)",
+                    self.quant_config.codebook,
                     self.bits,
                     n_exp,
                     layer._exl3_hidden_size,

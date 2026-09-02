@@ -1,0 +1,150 @@
+{
+  "verified": true,
+  "pairs": 9,
+  "requests_expected_and_observed": 26,
+  "all_http_200": true,
+  "all_checksum_correct": true,
+  "all_cold_zero_hit": true,
+  "warm_hits_by_target": {
+    "8000": [
+      7168,
+      7168,
+      7168
+    ],
+    "16000": [
+      14336,
+      14336,
+      14336
+    ],
+    "100000": [
+      93184,
+      93184,
+      93184
+    ]
+  },
+  "concurrent_8k_hits_total": 28672,
+  "full_suite_metric_delta": {
+    "vllm:prompt_tokens_total": 808350.0,
+    "vllm:prefix_cache_hits_total": 372736.0,
+    "vllm:prefix_cache_queries_total": 808350.0,
+    "vllm:request_success_total": 26.0
+  },
+  "service_after": {
+    "health_http": 200,
+    "running": 0,
+    "waiting": 0,
+    "restart_count": 0,
+    "oom": false
+  },
+  "metadata": {
+    "schema": 1,
+    "started_utc": "2026-09-02T22:18:28Z",
+    "base": "http://127.0.0.1:18080",
+    "model": "GLM-5.3-Flash-EXL3-2.05",
+    "max_model_len": 262144,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "thinking": false,
+    "max_tokens": 16,
+    "targets": [
+      8000,
+      16000,
+      100000
+    ],
+    "pairs_each": 3,
+    "page_model_tokens": 3584,
+    "scope": "3 sequential unique cold/warm pairs at 8K, 16K, 100K plus 4 independently seeded concurrent 8K warm follow-ups",
+    "idle_before": {
+      "utc": "2026-09-02T22:18:28Z",
+      "running": 0,
+      "waiting": 0,
+      "gpu_cache_usage": null
+    },
+    "finished_utc": "2026-09-02T22:27:39Z",
+    "idle_after": {
+      "utc": "2026-09-02T22:27:39Z",
+      "running": 0,
+      "waiting": 0,
+      "gpu_cache_usage": null
+    },
+    "health_after": 200
+  },
+  "summary": {
+    "targets": {
+      "8000": {
+        "pairs": 3,
+        "median_prompt_tokens_cold": 8002,
+        "median_cold_ttft_s": 10.175472225993872,
+        "median_cold_prefill_tok_s": 786.4008492459345,
+        "cold_hits": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median_warm_prompt_tokens": 8025,
+        "median_warm_ttft_s": 1.7752078989869915,
+        "warm_hits": [
+          7168.0,
+          7168.0,
+          7168.0
+        ],
+        "warm_hit_ratio_median": 0.893208722741433,
+        "all_correct": true,
+        "all_http_200": true,
+        "any_nan": false
+      },
+      "16000": {
+        "pairs": 3,
+        "median_prompt_tokens_cold": 16002,
+        "median_cold_ttft_s": 19.464166304038372,
+        "median_cold_prefill_tok_s": 822.1261445284687,
+        "cold_hits": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median_warm_prompt_tokens": 16025,
+        "median_warm_ttft_s": 2.7857701160246506,
+        "warm_hits": [
+          14336.0,
+          14336.0,
+          14336.0
+        ],
+        "warm_hit_ratio_median": 0.8946021840873635,
+        "all_correct": true,
+        "all_http_200": true,
+        "any_nan": false
+      },
+      "100000": {
+        "pairs": 3,
+        "median_prompt_tokens_cold": 100002,
+        "median_cold_ttft_s": 118.2501600770047,
+        "median_cold_prefill_tok_s": 845.681730450754,
+        "cold_hits": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median_warm_prompt_tokens": 100026,
+        "median_warm_ttft_s": 8.84216286498122,
+        "warm_hits": [
+          93184.0,
+          93184.0,
+          93184.0
+        ],
+        "warm_hit_ratio_median": 0.9315977845760103,
+        "all_correct": true,
+        "all_http_200": true,
+        "any_nan": false
+      }
+    },
+    "concurrent_8k": {
+      "ttft_min_s": 4.82947251398582,
+      "ttft_max_s": 11.751532624999527,
+      "aggregate_hits": 28672.0,
+      "aggregate_prompt_tokens": 32099,
+      "all_correct": true,
+      "all_http_200": true
+    }
+  }
+}

@@ -88,6 +88,7 @@
 ARG BASE=vllm/vllm-openai:glm53-flash-arm64-cu130@sha256:905c02933be6021301db2dc284e24e3727467aa3a0f63b41d609885778a07bce
 FROM ${BASE}
 
+
 RUN python3 - <<'PY'
 from pathlib import Path
 
@@ -374,7 +375,7 @@ COPY overlay/patch_exl3_fat_kernel.py /opt/glm53/patch_exl3_fat_kernel.py
 COPY overlay/exl3_fat_gemm.cu /opt/glm53/exl3-fat-kernel/exl3_fat_gemm.cu
 COPY overlay/exl3_fat_gemm.cuh /opt/glm53/exl3-fat-kernel/exl3_fat_gemm.cuh
 
-ARG EXLLAMAV3_COMMIT=c5d9c657966ffeeaa9353f0cc899f18629da4a13
+ARG EXLLAMAV3_COMMIT=e648f1a131365aae15920073e761a3fa5a527654
 ENV TORCH_CUDA_ARCH_LIST=12.1a
 ENV FLASHINFER_CUDA_ARCH_LIST=12.1a
 ENV MAX_JOBS=8
@@ -436,12 +437,14 @@ RUN set -eux; \
 # "exl3" in ModelConfig's ordered overrides list.
 COPY overlay/exl3.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py
 COPY overlay/patch_model_overrides.py /opt/glm53/patch_model_overrides.py
+COPY overlay/patch_full_exl3_loader.py /opt/glm53/patch_full_exl3_loader.py
 COPY overlay/qwen3_dflash2.py /opt/glm53/qwen3_dflash2.py
 COPY overlay/dflash2_speculator.py /opt/glm53/dflash2_speculator.py
 COPY overlay/patch_dflash2.py /opt/glm53/patch_dflash2.py
 COPY overlay/patch_glm_eagle3.py /opt/glm53/patch_glm_eagle3.py
 COPY overlay/patch_glm5_drafter_group.py /opt/glm53/patch_glm5_drafter_group.py
 COPY tests/test_exl3_overlay.py /opt/glm53/test_exl3_overlay.py
+COPY tests/test_exl3_mul1_fused_diff.py /opt/glm53/test_exl3_mul1_fused_diff.py
 COPY files/chat_template.jinja /opt/glm53/chat_template.jinja
 COPY overlay/patch_glm_video_placeholders.py /opt/glm53/patch_glm_video_placeholders.py
 COPY overlay/patch_suppress_stops_in_reasoning.py /opt/glm53/patch_suppress_stops_in_reasoning.py
@@ -460,9 +463,16 @@ COPY overlay/patch_indexer_workspace.py /opt/glm53/patch_indexer_workspace.py
 COPY tests/test_indexer_workspace.py /opt/glm53/test_indexer_workspace.py
 COPY overlay/ablit_runtime.py /opt/glm53/ablit_runtime.py
 COPY overlay/patch_ablit.py /opt/glm53/patch_ablit.py
+COPY overlay/patch_vision_qkv_mapper.py /opt/glm53/patch_vision_qkv_mapper.py
+COPY overlay/patch_vision_dual_layout.py /opt/glm53/patch_vision_dual_layout.py
+COPY overlay/patch_vision_exl3_canonical.py /opt/glm53/patch_vision_exl3_canonical.py
+COPY overlay/patch_qkv_loader_diag.py /opt/glm53/patch_qkv_loader_diag.py
+COPY overlay/patch_vision_exl3_ledger.py /opt/glm53/patch_vision_exl3_ledger.py
+COPY overlay/patch_exl3_bf16_output.py /opt/glm53/patch_exl3_bf16_output.py
 COPY tests/test_ablit.py /opt/glm53/test_ablit.py
 COPY ablit/LAYER_MAP.json ablit/fetch_transplant.py ablit/refusal_direction_glm53_bf_oproj.pt ablit/refusal_direction_glm53_dealign_late.pt /opt/glm53/ablit/
 RUN python3 /opt/glm53/patch_model_overrides.py
+RUN python3 /opt/glm53/patch_full_exl3_loader.py
 RUN python3 /opt/glm53/patch_dflash2.py
 RUN python3 /opt/glm53/patch_glm_eagle3.py
 RUN python3 /opt/glm53/patch_glm5_drafter_group.py
@@ -476,6 +486,26 @@ RUN python3 /opt/glm53/patch_kpool_tail_slotmap.py
 RUN python3 /opt/glm53/patch_indexer_workspace.py
 RUN python3 /opt/glm53/patch_spinwait.py --preflight
 RUN python3 /opt/glm53/patch_ablit.py
+
+# Preserve General17-22's proven late-load vision and BF16 repairs in the
+# clean General23 rebuild. Order is intentional: each patch advances the
+# previous loader shape, ending at split packed EXL3 q/k/v + native-QKV filter.
+RUN python3 /opt/glm53/patch_vision_qkv_mapper.py
+RUN python3 /opt/glm53/patch_vision_dual_layout.py
+RUN python3 /opt/glm53/patch_vision_exl3_canonical.py
+RUN python3 /opt/glm53/patch_qkv_loader_diag.py
+RUN python3 /opt/glm53/patch_vision_exl3_ledger.py
+RUN python3 /opt/glm53/patch_exl3_bf16_output.py
+RUN python3 - <<'PYVERIFY'
+from pathlib import Path
+mm=Path('/usr/local/lib/python3.12/dist-packages/vllm/models/glm5next/nvidia/multimodal.py').read_text()
+ex=Path('/usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py').read_text()
+assert '.attn.q_proj.": (".attn.qkv.", "q")' in mm
+assert 'redundant_native = (".attn.qkv.weight", ".attn.qkv.bias")' in mm
+assert 'recovered vision' in ex
+assert 'out_dtype=torch.float16)' in ex and 'y = y.to(x.dtype)' in ex
+print('general17-22 vision-ledger/BF16 repairs preserved')
+PYVERIFY
 
 RUN EXL3_SELFCHECK_GPU=0 python3 /opt/glm53/test_exl3_overlay.py \
     && python3 /opt/glm53/test_suppress_stops.py \
@@ -491,3 +521,7 @@ RUN EXL3_SELFCHECK_GPU=0 python3 /opt/glm53/test_exl3_overlay.py \
 # misses this label and rebuilds once. Keep last so stamp-only rebuilds are cheap.
 ARG GLM53_RECIPE_STAMP=unknown
 LABEL glm53.recipe.stamp=${GLM53_RECIPE_STAMP}
+LABEL org.opencontainers.image.title="GLM-5.3 One-Spark" \
+      org.opencontainers.image.description="TP1 GLM-5.3-Flash EXL3 2.05 + DFlash2 runtime for one DGX Spark" \
+      org.opencontainers.image.licenses="MIT AND Apache-2.0" \
+      org.opencontainers.image.source="https://github.com/gitcommit90/glm-5.3-one-spark"

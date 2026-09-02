@@ -1,7 +1,6 @@
 MIT License
 
 Copyright (c) 2026 Mia's AI Lab
-Copyright (c) 2026 GLM-5.3 One-Spark contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

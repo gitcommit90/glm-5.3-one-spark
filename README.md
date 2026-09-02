@@ -7,6 +7,7 @@ A reproducible, production-capable vLLM deployment of **Z.ai GLM-5.3-Flash on on
 This is a **deployment/runtime recipe**, not a new model or quantization. Model weights remain with their original publishers and are never bundled here.
 
 Hugging Face discovery page: https://huggingface.co/gitcommit90/GLM-5.3-Flash-EXL3-2.05-One-Spark
+Hugging Face Collection: https://huggingface.co/collections/gitcommit90/glm-53-one-spark-6a98b70df9981ae425acbc05
 
 ## Headline results
 

@@ -8,7 +8,7 @@ ce87a97eb95828c9c51d58370d1095c2deb1156c91acb874249b0f12dff0f78e  ./.env.tp4.exa
 2e5336cb270776d13538f8da3cfefef4d8c53ad5cdf5c211a085e62cdc095c0a  ./LICENSES/MIAAI-MIT.txt
 c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4  ./LICENSES/VLLM-APACHE-2.0.txt
 cdc8444c2507b12e88d8b0a6833a1c931899cf1db5592d5c0c8bfe68e47576e1  ./PROVENANCE.md
-6979c8b35c7c121e22238ce1b403dd7febf80326ac68ef8424b52496cfc5dc6c  ./README.md
+6a1a9c32cb352d2569a61771624eea57e34d2fca85cb536fa75f6bdad1af28d0  ./README.md
 5c69e57b0b0d6f5b8842f8da4a7a1fefd65a2c27c12882f8d660c5c1217f70e6  ./THIRD_PARTY_NOTICES.md
 a4bd1305a7138b25d87f6c6084d535ff0b3f8a2298babf145af1647442f741fa  ./ablit/LAYER_MAP.json
 65612295f1eb6d6b67d65f71be46375dcf74d9f62a97527c86900fe199eca861  ./ablit/fetch_transplant.py
@@ -49,7 +49,7 @@ b06d19231b024a8318835ffcf602e16113129589593998d28226f99b56445444  ./docs/upstrea
 948a7bbf2e1fcf14f3d43680c04472e8b953e58f240c890b484599c7e83705ce  ./examples/pi/settings.json
 4949916d7dea2c2aafaa4b8e404a313c1d0f698fb1cc93fdf5ec68b8686e924f  ./examples/pi/subagents.json
 3050de3f995e0ae8a612f411c01621d65822ddd10f7ef6e0fb7c23bdb4a18523  ./files/chat_template.jinja
-4c992f692a678c2ed3571e02f4559b522656c43477209b45f9cbd7f4311919b1  ./huggingface/README.md
+88d0966bea5880ec07c925b0c36c9578bc29a3312b66a2a81a25b3d477a8d902  ./huggingface/README.md
 fe87d8864fcfe174eca6eda9bd03813424e2425ccbaae532877b89c4b191cacf  ./huggingface/collection.json
 f12c8d3b3ec24339dc081f431b0cbefd7559a42c35b134b38cc94a589658685e  ./overlay/__pycache__/ablit_runtime.cpython-312.pyc
 fb0c709197a4f026137f084ba4c51a199dbdc1dd7874ad633b709e81ea139c23  ./overlay/__pycache__/dflash2_speculator.cpython-312.pyc

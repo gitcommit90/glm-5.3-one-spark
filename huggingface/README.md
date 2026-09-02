@@ -58,6 +58,7 @@ Every cold request had zero prefix-cache hits; every warm checksum response was 
 ## Links
 
 - **GitHub source and instructions:** `https://github.com/gitcommit90/glm-5.3-one-spark`
+- **Hugging Face Collection:** https://huggingface.co/collections/gitcommit90/glm-53-one-spark-6a98b70df9981ae425acbc05
 - **Prebuilt ARM64 runtime image:** `ghcr.io/gitcommit90/glm-5.3-one-spark:general23`
 - **Target checkpoint:** https://huggingface.co/turboderp/GLM-5.3-Flash-exl3/tree/2.05bpw
 - **DFlash2 checkpoint:** https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2

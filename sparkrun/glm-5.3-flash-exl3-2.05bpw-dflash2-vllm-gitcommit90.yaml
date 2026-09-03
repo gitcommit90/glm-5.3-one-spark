@@ -1,0 +1,94 @@
+recipe_version: "1"
+model: turboderp/GLM-5.3-Flash-exl3
+model_revision: 51058cd551c7e570d87bd32a4adee720edce2349
+runtime: vllm
+min_nodes: 1
+max_nodes: 1
+container: ghcr.io/gitcommit90/glm-5.3-one-spark@sha256:ba6db0547b24162854948fb16cda68dd4408360e03aeba480edb8d3d876eaeef
+
+metadata:
+  description: >-
+    GLM-5.3-Flash EXL3 2.05 bpw on one DGX Spark (TP1), with DFlash2 K7,
+    FP8 KV cache, CUDA graphs, prefix caching, vision, reasoning, and tools.
+    The immutable image contains the complete General23 vLLM integration;
+    model weights are downloaded from their original Hugging Face publishers.
+  maintainer: "gitcommit90"
+  category: chat
+  model_params: 320B
+  model_dtype: int4
+  kv_dtype: fp8
+  model_vram: 79.96
+  context: 262144
+  topology: "1x NVIDIA DGX Spark (GB10), TP=1"
+  license_note: >-
+    The DFlash2 drafter is CC BY-NC-ND 4.0 for noncommercial
+    research/evaluation; users must review and comply with its upstream terms.
+
+defaults:
+  port: 8000
+  host: 0.0.0.0
+  tensor_parallel: 1
+  served_model_name: GLM-5.3-Flash-EXL3-2.05
+  max_model_len: 262144
+  max_num_seqs: 4
+  max_num_batched_tokens: 7168
+  gpu_memory_utilization: 0.90
+  kv_cache_dtype: fp8
+  speculative_config: '{"method":"dflash","model":"incoai/GLM-5.3-Flash-DFlash2","num_speculative_tokens":7,"kv_cache_dtype":"auto","draft_sample_method":"probabilistic","rejection_sample_method":"standard","draft_tensor_parallel_size":1}'
+
+distribution_config:
+  models:
+    entries:
+      - name: "{model}"
+        revision: 51058cd551c7e570d87bd32a4adee720edce2349
+      - name: incoai/GLM-5.3-Flash-DFlash2
+        revision: bf582e4eacc1810f76656d1811693ff6c6737d2a
+
+executor_config:
+  shm_size: 32gb
+  network: host
+  ipc: host
+  user: root
+  entrypoint: ""
+
+env:
+  TORCH_CUDA_ARCH_LIST: 12.1a
+  FLASHINFER_CUDA_ARCH_LIST: 12.1a
+  CUTE_DSL_ARCH: sm_121a
+  EXL3_FUSED_MOE: "1"
+  EXL3_MOE_ROW_TILE: "0"
+  EXL3_TEMP_ROWS_FUSED: "128"
+  EXL3_FAT_SORTED: "0"
+  EXL3_FAT_BATCHED: "0"
+  EXL3_FAT_KERNEL: "1"
+  GLM53_SUPPRESS_STOPS_IN_REASONING: "1"
+  GLM53_MIXED_PREFILL_CHUNK: skip
+  GLM53_INDEXER_WORKSPACE: stock
+  GLM53_SPINWAIT_MS: stock
+  VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS: "1800"
+
+command: |
+  python3 /opt/glm53/patch_glm_video_placeholders.py &&
+  python3 /opt/glm53/patch_suppress_stops_in_reasoning.py &&
+  python3 /opt/glm53/patch_scheduler_decode_floor.py &&
+  python3 /opt/glm53/patch_glm5_drafter_group.py &&
+  python3 /opt/glm53/patch_hybrid_prefix_hit.py &&
+  python3 /opt/glm53/patch_xgrammar_termination.py &&
+  python3 /opt/glm53/patch_kpool_tail_slotmap.py &&
+  exec vllm serve {model} \
+    --served-model-name {served_model_name} \
+    --host {host} --port {port} \
+    --tensor-parallel-size {tensor_parallel} \
+    --tool-call-parser glm47 --enable-auto-tool-choice \
+    --reasoning-parser glm45 \
+    --enable-prefix-caching --no-enable-flashinfer-autotune \
+    --quantization exl3 \
+    --max-model-len {max_model_len} \
+    --gpu-memory-utilization {gpu_memory_utilization} \
+    --max-num-seqs {max_num_seqs} \
+    --max-num-batched-tokens {max_num_batched_tokens} \
+    --kv-cache-dtype {kv_cache_dtype} \
+    --speculative-config '{speculative_config}' \
+    --chat-template /opt/glm53/chat_template.jinja \
+    --limit-mm-per-prompt '{"image":2,"video":0}' --skip-mm-profiling \
+    --cudagraph-capture-sizes 1 2 4 8 16 24 32

@@ -129,6 +129,14 @@ DFLASH_DIR=/path/to/GLM-5.3-Flash-DFlash2 \
 systemctl --user enable --now glm53-one-spark.service
 ```
 
+## SparkRun / Spark Arena
+
+A native, digest-pinned SparkRun recipe is provided at
+[`sparkrun/glm-5.3-flash-exl3-2.05bpw-dflash2-vllm-gitcommit90.yaml`](sparkrun/glm-5.3-flash-exl3-2.05bpw-dflash2-vllm-gitcommit90.yaml).
+It reproduces the one-Spark General23 launch without private overlays or bundled
+model weights. See [`sparkrun/README.md`](sparkrun/README.md) for usage and the
+DFlash2 license notice.
+
 ## Validation
 
 Fast source/package checks:

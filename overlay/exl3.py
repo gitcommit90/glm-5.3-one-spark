@@ -1574,6 +1574,8 @@ class Exl3LinearMethod(LinearMethodBase):
                 f"EXL3 linear load mismatch {self.prefix}.{param._exl3_suffix}: "
                 f"dest={tuple(dest.shape)} loaded={tuple(loaded_weight.shape)} shard={shard_id}"
             )
+        if loaded_weight.device.type == "cpu":
+            loaded_weight = loaded_weight.clone()  # load-time fix, see _load_exl3
         dest.copy_(loaded_weight)
 
     def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
@@ -1732,7 +1734,12 @@ class Exl3MoEMethod(FusedMoEMethodBase):
         tp_rank = get_tensor_model_parallel_rank()
         tp_size = get_tensor_model_parallel_world_size()
         suffix = _suffix_from_mapped_name(weight_name)
-        loaded = loaded_weight.detach().contiguous()
+        # Load-time fix: force mmap-backed safetensors pages into anonymous
+        # RAM before the H2D copy. Pageable cudaMemcpy straight from the mmap
+        # costs ~3.4 ms per small expert tensor; clone() first gives ~0.35 ms.
+        # (148,608 expert tensors: 705 s -> 15 s on one DGX Spark.)
+        loaded = loaded_weight.detach()
+        loaded = loaded.clone() if loaded.device.type == "cpu" else loaded.contiguous()
         if loaded.ndim == 0:
             loaded = loaded.reshape(1)
 

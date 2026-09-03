@@ -25,8 +25,11 @@ fi
 
 docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
 docker run -d --name "$CONTAINER" --gpus all --network host --ipc=host \
-  --shm-size 32g --stop-timeout 90 --cap-add IPC_LOCK \
+  --shm-size 32g --stop-timeout 10 --cap-add IPC_LOCK \
   --ulimit memlock=-1 --ulimit stack=67108864 \
+  --add-host "$(hostname):127.0.1.1" \
+  -e GLOO_SOCKET_IFNAME=lo \
+  -e VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0 \
   -e TORCH_CUDA_ARCH_LIST=12.1a \
   -e FLASHINFER_CUDA_ARCH_LIST=12.1a \
   -e CUTE_DSL_ARCH=sm_121a \
@@ -47,7 +50,8 @@ docker run -d --name "$CONTAINER" --gpus all --network host --ipc=host \
   -v "${CACHE_ROOT:-$HOME/.cache/glm53-one-spark}/vllm:/root/.cache/vllm" \
   -v "${CACHE_ROOT:-$HOME/.cache/glm53-one-spark}/triton:/root/.triton/cache" \
   -v "${CACHE_ROOT:-$HOME/.cache/glm53-one-spark}/tilelang:/root/.tilelang/cache" \
+  -v "${CACHE_ROOT:-$HOME/.cache/glm53-one-spark}/torchinductor:/tmp/torchinductor_root" \
   --entrypoint bash "$IMAGE" /start.sh
 
-echo "Container started. Initial API readiness takes about 14 minutes with warm caches."
+echo "Container started. Initial API readiness takes about 3.5 minutes (was 14 before 2026-09-03)."
 echo "Follow startup: docker logs -f $CONTAINER"

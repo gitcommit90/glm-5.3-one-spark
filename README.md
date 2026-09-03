@@ -3,6 +3,8 @@
 A reproducible, production-capable vLLM deployment of **Z.ai GLM-5.3-Flash on one NVIDIA DGX Spark**, using [Turboderp's 2.05-bpw EXL3 checkpoint](https://huggingface.co/turboderp/GLM-5.3-Flash-exl3/tree/2.05bpw) and [Inco AI's DFlash2 drafter](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2).
 
 > **64.1 tok/s structured C1 · 25.1 tok/s prose · 181.9 tok/s C4 active-stream aggregate · 262K context**
+>
+> ⭐ **2026-09-03: cold start to API-ready cut from ~14 min to 3 min 21 s (−76%)** with no change to throughput. Details in [`docs/startup-time.md`](docs/startup-time.md).
 
 This is a **deployment/runtime recipe**, not a new model or quantization. Model weights remain with their original publishers and are never bundled here.
 
@@ -68,8 +70,8 @@ Measured startup allocation:
 | Component | Memory |
 |---|---:|
 | Loaded target + DFlash model allocation | 79.96 GiB |
-| KV-cache pool | 20.75 GiB |
-| CUDA graphs | 0.28 GiB |
+| KV-cache pool | 23.55 GiB (was 20.75 before the 2026-09-03 startup work) |
+| CUDA graphs | 0.24 GiB |
 | Live model process after startup | approximately 106.7 GiB |
 
 ## Quick start
@@ -156,8 +158,8 @@ Canonical results were collected directly from the backend with the scheduler id
 
 ## Known limitations
 
-- Initial model load is about **14 minutes** with warm build/JIT caches.
-- The 20.75-GiB KV pool holds approximately 324,710 tokens total; four full 262K contexts do not fit simultaneously.
+- Initial model load is about **3.5 minutes** cold (~14 minutes before 2026-09-03; see [`docs/startup-time.md`](docs/startup-time.md)).
+- The 23.55-GiB KV pool holds approximately 368,268 tokens total; four full 262K contexts do not fit simultaneously.
 - Current mixed-prefill admission stages C2/C4 work. This is why strict C4 wall throughput is lower than summed active-stream throughput.
 - The special E2 fat-expert kernel is compiled but this checkpoint lacks the shared-SUH layout it requires; runtime safely uses the sorted fallback for those prefill cases. Core fused EXL3 routed-MoE decode remains active.
 - DFlash2's checkpoint license limits it to noncommercial research/evaluation unless Inco AI grants another license.

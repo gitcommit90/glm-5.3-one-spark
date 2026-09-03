@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# patch_glm_video_placeholders installs a .pth import hook into the live site-packages,
+# so it must run at container start. The other overlay patches are applied at image build.
 python3 /opt/glm53/patch_glm_video_placeholders.py
-python3 /opt/glm53/patch_suppress_stops_in_reasoning.py
-python3 /opt/glm53/patch_scheduler_decode_floor.py
-python3 /opt/glm53/patch_glm5_drafter_group.py
-python3 /opt/glm53/patch_hybrid_prefix_hit.py
-python3 /opt/glm53/patch_xgrammar_termination.py
-python3 /opt/glm53/patch_kpool_tail_slotmap.py
 SPEC='{"method":"dflash","model":"/draft","num_speculative_tokens":7,"kv_cache_dtype":"auto","draft_sample_method":"probabilistic","rejection_sample_method":"standard","draft_tensor_parallel_size":1}'
 exec vllm serve /model \
   --served-model-name GLM-5.3-Flash-EXL3-2.05 \

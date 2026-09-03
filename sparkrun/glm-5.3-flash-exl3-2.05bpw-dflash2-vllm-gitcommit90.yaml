@@ -66,15 +66,13 @@ env:
   GLM53_INDEXER_WORKSPACE: stock
   GLM53_SPINWAIT_MS: stock
   VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS: "1800"
+  # Startup-time fixes (docs/startup-time.md): avoid gloo hostname DNS stalls,
+  # skip the CUDA-graph memory estimation pass.
+  GLOO_SOCKET_IFNAME: lo
+  VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS: "0"
 
 command: |
   python3 /opt/glm53/patch_glm_video_placeholders.py &&
-  python3 /opt/glm53/patch_suppress_stops_in_reasoning.py &&
-  python3 /opt/glm53/patch_scheduler_decode_floor.py &&
-  python3 /opt/glm53/patch_glm5_drafter_group.py &&
-  python3 /opt/glm53/patch_hybrid_prefix_hit.py &&
-  python3 /opt/glm53/patch_xgrammar_termination.py &&
-  python3 /opt/glm53/patch_kpool_tail_slotmap.py &&
   exec vllm serve {model} \
     --served-model-name {served_model_name} \
     --host {host} --port {port} \

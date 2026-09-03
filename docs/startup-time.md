@@ -35,3 +35,9 @@ Disk was never the limit: NVMe reads at 5 GB/s and a full 79 GB safetensors pass
 ## Remaining budget (~200 s)
 
 27 s process spawn + imports · ~60–74 s weight load · 18 s memory profile · 33 s CUDA-graph capture · ~17 s API finalize · misc. The weight load could reach ~25 s with `safe_open(device="cuda")` in the loader; not done yet.
+
+## Image note
+
+The `overlay/exl3.py` loader fix is a source change: it is in `start.sh` builds from this repo, but the pinned
+`ghcr.io/gitcommit90/glm-5.3-one-spark@sha256:ba6db054…` image used by the SparkRun recipe predates it. The recipe
+already carries the env/command fixes (≈6 min startup); the full 3.5 min needs the next image push.

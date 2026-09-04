@@ -69,6 +69,18 @@ Use K=8 for list/JSON-heavy workloads (`ONE_SPARK_K=8`). Raw data in the GitHub 
 
 Every cold request had zero prefix-cache hits; every warm checksum response was correct.
 
+## Quantization Analysis
+
+This deployment uses [Turboderp's GLM-5.3-Flash EXL3 2.05-bpw quant](https://huggingface.co/turboderp/GLM-5.3-Flash-exl3/tree/2.05bpw), revision `51058cd551c7e570d87bd32a4adee720edce2349`. The exact checkpoint is **85.23 GB (79.38 GiB)**.
+
+An [independent full-vocabulary measurement](https://github.com/malaiwah/quant-fidelity-suite/blob/794d80fa79db4d30cd0fa8140a07c665dd363251/registry/receipts/malaiwah/stream-turbo-2.05bpw-kld.json) of this exact revision against BF16 teacher logits reported:
+
+| Quant | Size | Top-1 agreement | Mean KLD | Scored positions |
+|---|---:|---:|---:|---:|
+| Turboderp EXL3 2.05 | 85.23 GB | **88.92%** | **0.121638** | **51,175** |
+
+The measurement used 25 windows, the full 154,880-token vocabulary, teacher forcing, FP64 accumulation, and two cold runs with identical results. The checkpoint was quantized from the official FP8 release; the measurement reference is BF16. Machine-readable summary: [`quantization-analysis.json`](https://github.com/gitcommit90/glm-5.3-one-spark/blob/main/benchmarks/quality/quantization-analysis.json).
+
 ## Links
 
 - **GitHub source and instructions:** `https://github.com/gitcommit90/glm-5.3-one-spark`

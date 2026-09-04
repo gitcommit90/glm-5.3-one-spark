@@ -1,0 +1,42 @@
+{
+  "artifact": {
+    "branch": "2.05bpw",
+    "config_sha256": "43921c0b6dd51805a243649a647417230ef9cb9ba8e26ae06a461c3f7e08d037",
+    "declared_bits_per_weight": 2.05,
+    "format": "EXL3 mul1",
+    "index_sha256": "9509363becd75ed23fc60fd678cd4dd3de214c4fa4df177f8d13ab7a09bc4ecb",
+    "quantized_from": "official GLM-5.3-Flash FP8 release",
+    "repository": "turboderp/GLM-5.3-Flash-exl3",
+    "revision": "51058cd551c7e570d87bd32a4adee720edce2349",
+    "size_bytes": 85233484348,
+    "size_gb_decimal": 85.233484348,
+    "size_gib_binary": 79.37986808642745
+  },
+  "independent_measurement": {
+    "accumulation_dtype": "float64",
+    "bitwise_deterministic": true,
+    "cold_runs": 2,
+    "kld_direction": "teacher || student",
+    "mean_tokenwise_kld_nats": 0.12163767673339457,
+    "measurer": "malaiwah",
+    "per_run_top1_agreement": [
+      0.8891841719589644,
+      0.8891841719589644
+    ],
+    "reference": "sealed_ep8_bf16_teacher",
+    "run_means": [
+      0.12163767673339457,
+      0.12163767673339457
+    ],
+    "scored_positions": 51175,
+    "top1_agreement": 0.8891841719589644,
+    "vocabulary_tokens": 154880,
+    "windows": 25
+  },
+  "schema_version": 1,
+  "source": {
+    "repository_commit": "794d80fa79db4d30cd0fa8140a07c665dd363251",
+    "sha256": "f97f6900ceeb70a8a164eb9003989c13336039a923013a014888dcb449a84859",
+    "url": "https://raw.githubusercontent.com/malaiwah/quant-fidelity-suite/794d80fa79db4d30cd0fa8140a07c665dd363251/registry/receipts/malaiwah/stream-turbo-2.05bpw-kld.json"
+  }
+}

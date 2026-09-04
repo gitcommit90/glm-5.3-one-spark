@@ -64,6 +64,12 @@ Original DFlash citation:
 }
 ```
 
+## malaiwah — quant-fidelity-suite
+
+- Source: https://github.com/malaiwah/quant-fidelity-suite
+- Exact-checkpoint receipt: https://github.com/malaiwah/quant-fidelity-suite/blob/794d80fa79db4d30cd0fa8140a07c665dd363251/registry/receipts/malaiwah/stream-turbo-2.05bpw-kld.json
+- Use here: independent full-vocabulary KLD and top-1 measurement for the exact 2.05-bpw checkpoint revision
+
 ## vLLM contributors
 
 - Source: https://github.com/vllm-project/vllm

@@ -1,6 +1,6 @@
 {
   "title": "GLM-5.3 One-Spark",
-  "description": "Original models and the reproducible single-DGX-Spark deployment package.",
+  "description": "Original models and the reproducible single-DGX-Spark deployment package, with runtime benchmarks and independent quantization-fidelity measurements.",
   "items": [
     {"type": "model", "id": "zai-org/GLM-5.3-Flash"},
     {"type": "model", "id": "turboderp/GLM-5.3-Flash-exl3"},

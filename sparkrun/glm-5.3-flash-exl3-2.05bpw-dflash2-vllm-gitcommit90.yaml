@@ -8,7 +8,7 @@ container: ghcr.io/gitcommit90/glm-5.3-one-spark@sha256:ba6db0547b24162854948fb1
 
 metadata:
   description: >-
-    GLM-5.3-Flash EXL3 2.05 bpw on one DGX Spark (TP1), with DFlash2 K7,
+    GLM-5.3-Flash EXL3 2.05 bpw on one DGX Spark (TP1), with DFlash2 K5,
     FP8 KV cache, CUDA graphs, prefix caching, vision, reasoning, and tools.
     The immutable image contains the complete General23 vLLM integration;
     model weights are downloaded from their original Hugging Face publishers.
@@ -34,7 +34,7 @@ defaults:
   max_num_batched_tokens: 7168
   gpu_memory_utilization: 0.90
   kv_cache_dtype: fp8
-  speculative_config: '{"method":"dflash","model":"incoai/GLM-5.3-Flash-DFlash2","num_speculative_tokens":7,"kv_cache_dtype":"auto","draft_sample_method":"probabilistic","rejection_sample_method":"standard","draft_tensor_parallel_size":1}'
+  speculative_config: '{"method":"dflash","model":"incoai/GLM-5.3-Flash-DFlash2","num_speculative_tokens":5,"kv_cache_dtype":"auto","draft_sample_method":"probabilistic","rejection_sample_method":"standard","draft_tensor_parallel_size":1}'
 
 distribution_config:
   models:

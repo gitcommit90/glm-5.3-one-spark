@@ -1,0 +1,134 @@
+{
+  "phase": "code-k5",
+  "health_code": 200,
+  "health_body": "",
+  "runs": [
+    {
+      "http": 200,
+      "ttft_s": 0.4980490979505703,
+      "wall_s": 10.373568844050169,
+      "decode_s": 9.875519746099599,
+      "tok_s": 40.4029367829058,
+      "completion_tokens": 400,
+      "prompt_tokens": 60,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "```python\nfrom collections import OrderedDict\nfrom typing import Any, Optional\n\n\nclass LRUCache:\n    \"\"\"A fixed-capacity Least Recently Used (LRU) cache.\n\n    Uses an OrderedDict to maintain insertion order; the most recently\n    used item is always kept at the end of the dictionary. On a `put`\n    that exceeds capacity, the least recently used entry (the first\n    item) is evicted.\n\n    Attribute",
+      "text_len": 1824,
+      "usage": {
+        "prompt_tokens": 60,
+        "total_tokens": 460,
+        "completion_tokens": 400
+      },
+      "spec": {
+        "drafts": 87,
+        "draft_tokens": 435,
+        "accepted": 313,
+        "accept_ratio": 0.7195,
+        "accepted_per_step": 3.598,
+        "pos": [
+          0.9425,
+          0.8161,
+          0.7241,
+          0.5977,
+          0.5172
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.5947310159681365,
+      "wall_s": 10.54839675896801,
+      "decode_s": 9.953665742999874,
+      "tok_s": 40.08573427137687,
+      "completion_tokens": 400,
+      "prompt_tokens": 60,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "```python\nfrom collections import OrderedDict\nfrom typing import Any, Optional\n\n\nclass LRUCache:\n    \"\"\"A fixed-capacity Least Recently Used (LRU) cache.\n\n    Uses an OrderedDict to maintain insertion order; the most recently\n    used item is always moved to the end, so eviction removes the item\n    at the front of the dict.\n    \"\"\"\n\n    def __init__(self, capacity: int) -> None:\n        \"\"\"Initia",
+      "text_len": 1782,
+      "usage": {
+        "prompt_tokens": 60,
+        "total_tokens": 460,
+        "completion_tokens": 400
+      },
+      "spec": {
+        "drafts": 87,
+        "draft_tokens": 435,
+        "accepted": 313,
+        "accept_ratio": 0.7195,
+        "accepted_per_step": 3.598,
+        "pos": [
+          0.931,
+          0.8161,
+          0.7126,
+          0.6207,
+          0.5172
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.5889579899376258,
+      "wall_s": 11.063080910942517,
+      "decode_s": 10.474122921004891,
+      "tok_s": 38.09388175117194,
+      "completion_tokens": 400,
+      "prompt_tokens": 60,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "```python\nfrom collections import OrderedDict\nfrom typing import Any, Optional\n\n\nclass LRUCache:\n    \"\"\"A fixed-capacity Least Recently Used (LRU) cache.\n\n    Uses an OrderedDict to maintain insertion order; the most recently\n    used item is always moved to the end, so eviction removes the item\n    at the front of the ordered mapping.\n    \"\"\"\n\n    def __init__(self, capacity: int) -> None:\n      ",
+      "text_len": 1805,
+      "usage": {
+        "prompt_tokens": 60,
+        "total_tokens": 460,
+        "completion_tokens": 400
+      },
+      "spec": {
+        "drafts": 92,
+        "draft_tokens": 460,
+        "accepted": 308,
+        "accept_ratio": 0.6696,
+        "accepted_per_step": 3.348,
+        "pos": [
+          0.8696,
+          0.7391,
+          0.663,
+          0.5761,
+          0.5
+        ]
+      }
+    }
+  ],
+  "ts": 1788463019.0662873,
+  "prompt": "lrucache-code",
+  "thinking": false,
+  "temperature": 0,
+  "tok_s_median": 40.08573427137687,
+  "tok_s_min": 38.09388175117194,
+  "tok_s_max": 40.4029367829058,
+  "ttft_median_s": 0.5889579899376258,
+  "completion_tokens_median": 400.0,
+  "accept_ratio_median": 0.7195,
+  "accepted_per_step_median": 3.598,
+  "any_nan": false,
+  "health_code_after": 200,
+  "short_after": {
+    "http": 200,
+    "ttft_s": 0.5240627919556573,
+    "wall_s": 0.8515288589987904,
+    "decode_s": 0.3274660670431331,
+    "tok_s": 21.37626064039782,
+    "completion_tokens": 8,
+    "prompt_tokens": 40,
+    "finish_reason": "length",
+    "nan": false,
+    "text_head": "# How a Hash Map Works: A",
+    "text_len": 25,
+    "usage": {
+      "prompt_tokens": 40,
+      "total_tokens": 48,
+      "completion_tokens": 8
+    }
+  }
+}

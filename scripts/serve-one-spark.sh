@@ -3,7 +3,8 @@ set -euo pipefail
 # patch_glm_video_placeholders installs a .pth import hook into the live site-packages,
 # so it must run at container start. The other overlay patches are applied at image build.
 python3 /opt/glm53/patch_glm_video_placeholders.py
-SPEC='{"method":"dflash","model":"/draft","num_speculative_tokens":7,"kv_cache_dtype":"auto","draft_sample_method":"probabilistic","rejection_sample_method":"standard","draft_tensor_parallel_size":1}'
+K="${ONE_SPARK_K:-5}"  # DFlash2 draft depth; 5 = best prose/code, 8 = best structured (see README K sweep)
+SPEC='{"method":"dflash","model":"/draft","num_speculative_tokens":'"$K"',"kv_cache_dtype":"auto","draft_sample_method":"probabilistic","rejection_sample_method":"standard","draft_tensor_parallel_size":1}'
 exec vllm serve /model \
   --served-model-name GLM-5.3-Flash-EXL3-2.05 \
   --host "${ONE_SPARK_HOST:-127.0.0.1}" --port "${ONE_SPARK_PORT:-18080}" \

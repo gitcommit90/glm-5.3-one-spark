@@ -44,7 +44,7 @@ docker run -d --name "$CONTAINER" --gpus all --network host --ipc=host \
   -e GLM53_INDEXER_WORKSPACE=stock \
   -e GLM53_SPINWAIT_MS=stock \
   -e VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS=1800 \
-  -e ONE_SPARK_HOST="$HOST" -e ONE_SPARK_PORT="$PORT" \
+  -e ONE_SPARK_HOST="$HOST" -e ONE_SPARK_PORT="$PORT" -e ONE_SPARK_K="${ONE_SPARK_K:-5}" \
   -v "$MODEL_DIR:/model:ro" -v "$DFLASH_DIR:/draft:ro" \
   -v "$ROOT/scripts/serve-one-spark.sh:/start.sh:ro" \
   -v "${CACHE_ROOT:-$HOME/.cache/glm53-one-spark}/vllm:/root/.cache/vllm" \

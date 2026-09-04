@@ -40,3 +40,12 @@ The scheduler staged C2/C4 admission; summed active-stream throughput must there
 - Exactly 26 successful requests during the suite
 
 Each raw evidence directory has a SHA-256 manifest generated over its published contents.
+
+## Speculative depth (K) sweep — 2026-09-03
+
+- Live General23 image, systemd unit, one full restart per K (K ∈ {4,5,6,7,8}); K7 measured first (baseline, 5 runs) and again last (restored) to bound drift
+- Temperature 0, thinking off, 400 generated tokens, C1, direct backend
+- Three prompts: structured (count 1→200, Mia's convention), open-ended prose (hash-map explainer), code (LRU cache implementation); 3 runs each
+- Per-run draft/accept counters read from `/metrics` deltas; step time derived from decode wall / steps
+- Coherence gate after each K: short chat probe, non-thinking probe, no NaN/`locklock` tokens in output
+- Raw: `benchmarks/raw/k-sweep-20260903/` (structured) and `prose-code/` therein; `sweep.log` holds the per-K RESULT lines and restart timings

@@ -2,7 +2,9 @@
 
 A reproducible, production-capable vLLM deployment of **Z.ai GLM-5.3-Flash on one NVIDIA DGX Spark**, using [Turboderp's 2.05-bpw EXL3 checkpoint](https://huggingface.co/turboderp/GLM-5.3-Flash-exl3/tree/2.05bpw) and [Inco AI's DFlash2 drafter](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2).
 
-> **64.1 tok/s structured C1 · 25.1 tok/s prose · 181.9 tok/s C4 active-stream aggregate · 262K context**
+> **64.1 tok/s structured C1 (K7) · 29.9 tok/s prose / 40.1 tok/s code (K5 default) · 181.9 tok/s C4 active-stream aggregate · 262K context**
+>
+> ⭐ **2026-09-03: default `num_speculative_tokens` changed from 7 to 5** after a K sweep — best prose and code speed, ~16% slower on pure structured output. K=8 remains the structured-output setting. See [K sweep](#speculative-depth-k-sweep).
 >
 > ⭐ **2026-09-03: cold start to API-ready cut from ~14 min to 3 min 21 s (−76%)** with no change to throughput. Details in [`docs/startup-time.md`](docs/startup-time.md).
 
@@ -13,7 +15,7 @@ Hugging Face Collection: https://huggingface.co/collections/gitcommit90/glm-53-o
 
 ## Headline results
 
-One DGX Spark (GB10, 128 GB unified memory), TP1, EXL3 2.05 bpw, DFlash2 K7, FP8 KV, thinking off, direct vLLM backend:
+One DGX Spark (GB10, 128 GB unified memory), TP1, EXL3 2.05 bpw, DFlash2 **K7** (the default at the time these were collected; shipped default is now K5, see below), FP8 KV, thinking off, direct vLLM backend:
 
 | Workload | Sampling | Result |
 |---|---|---:|
@@ -25,6 +27,22 @@ One DGX Spark (GB10, 128 GB unified memory), TP1, EXL3 2.05 bpw, DFlash2 K7, FP8
 | Structured C4, strict submission-to-completion wall | temperature 1.0, top-p 0.95 | **91.475 tok/s** |
 
 **C4 disclosure:** 181.944 tok/s follows MiaAI's sum-of-individual-active-stream-rates convention. The current mixed-prefill scheduler admits C4 in stages, so strict full-batch wall throughput is 91.475 tok/s. Both are reported to avoid conflating active decode with delivered wall throughput.
+
+### Speculative depth (K) sweep
+
+`num_speculative_tokens` is the only knob that moved after release. Spec decode is lossless, so K changes speed only, never output. Measured 2026-09-03 on the live General23 image, temperature 0, thinking off, 400 output tokens, C1, one restart per K (3 runs each; K7 structured baseline 5 runs). Raw: [`benchmarks/raw/k-sweep-20260903`](benchmarks/raw/k-sweep-20260903).
+
+| K | Structured (count 1→200) | Prose (hash-map explainer) | Code (LRU cache) | Structured accept/step | Prose accept/step |
+|--:|---:|---:|---:|---:|---:|
+| 4 | 48.6 tok/s | 28.8 | 37.7 | 3.99 | 1.99 |
+| **5 (default)** | 53.5 | **29.9** | **40.1** | 4.94 | 2.30 |
+| 6 | 59.2 | 29.0 | 37.5 | 5.91 | 2.46 |
+| 7 (previous default) | 63.9 | 25.8 | 38.3 | 6.86 | 2.29 |
+| 8 | **66.9** | 23.9 | 38.0 | 7.70 | 2.23 |
+
+Reading: structured output accepts almost every draft token, so speed rises monotonically with K. Prose and code accept ~2–4 tokens/step regardless of K, so each extra draft token past ~5 is wasted drafter work and a longer step (110 ms at K5 vs 127 ms at K7). K5 is the best all-round default for chat/coding use; set `K=8` if your workload is dominated by lists, JSON, or repetitive structured text.
+
+Override at launch: `ONE_SPARK_K=8 ./start.sh` (or edit `num_speculative_tokens` in `scripts/serve-one-spark.sh`).
 
 ### Long-context prefill and prefix cache
 
@@ -46,7 +64,7 @@ The two-Spark work by [Mia's AI Lab](https://github.com/MiaAI-Lab/GLM-5.3-Flash-
 - ARM64/GB10 `sm_121a` ExLlamaV3 build and x86-intrinsic fail-closed fixes
 - Vision EXL3 ledger, QKV mapping, and dual-layout repairs
 - BF16/FP16 compatibility bridge needed by this checkpoint/runtime combination
-- DFlash2 K7 integration with the full target model
+- DFlash2 integration with the full target model (K5 default, K sweep published)
 - A validated one-Spark memory shape with 262,144-token context
 - Reproducible benchmark harnesses and raw evidence
 - Persistent OpenAI-compatible serving with reasoning, tools, JSON, vision, and prefix caching
@@ -59,7 +77,7 @@ See [PROVENANCE.md](PROVENANCE.md) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTI
 - Drafter: `incoai/GLM-5.3-Flash-DFlash2`, revision `bf582e4eacc1810f76656d1811693ff6c6737d2a`
 - ExLlamaV3: `e648f1a131365aae15920073e761a3fa5a527654` (v1.4.5)
 - vLLM ARM64 base image digest: `sha256:905c02933be6021301db2dc284e24e3727467aa3a0f63b41d609885778a07bce`
-- TP1; DFlash2 K7; FP8 KV; CUDA graphs
+- TP1; DFlash2 K5 (`ONE_SPARK_K` override); FP8 KV; CUDA graphs
 - `max_model_len=262144`
 - `max_num_seqs=4`
 - `max_num_batched_tokens=7168`

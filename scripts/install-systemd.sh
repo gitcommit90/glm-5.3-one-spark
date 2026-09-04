@@ -5,7 +5,7 @@ UNIT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 mkdir -p "$UNIT_DIR"
 cat > "$UNIT_DIR/glm53-one-spark.service" <<UNIT
 [Unit]
-Description=GLM-5.3 One-Spark EXL3 2.05 + DFlash2 K7
+Description=GLM-5.3 One-Spark EXL3 2.05 + DFlash2 K5
 After=network-online.target docker.service
 Wants=network-online.target
 

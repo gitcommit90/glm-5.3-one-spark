@@ -21,4 +21,5 @@ print('package structure OK')
 PY
 (cd benchmarks/raw/default-sampling-pre-prefill-20260902T220641Z && sha256sum -c MANIFEST.sha256)
 (cd benchmarks/raw/default-sampling-cold-prefix-20260902T221828Z && sha256sum -c MANIFEST.sha256)
+(cd benchmarks/raw/k-sweep-20260903 && sha256sum -c --quiet MANIFEST.sha256)
 echo 'Package verification passed.'

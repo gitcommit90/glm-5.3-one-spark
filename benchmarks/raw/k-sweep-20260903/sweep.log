@@ -1,0 +1,39 @@
+2026-09-03T18:26:09Z bench K=7 (baseline)
+RESULT K=7 baseline median=63.89 min=63.82 max=64.10 accept=0.9804 acc/step=6.863 ttft=0.508 nan=False
+2026-09-03T18:26:45Z restart K=4
+2026-09-03T18:29:32Z server not healthy at start
+EXIT=1
+2026-09-03T18:29:44Z resumed with --runs 3 (baseline kept at 5 runs)
+2026-09-03T18:29:58Z ready K=4
+2026-09-03T18:30:03Z bench K=4 (sweep)
+RESULT K=4 sweep median=48.64 min=47.84 max=48.67 accept=0.9969 acc/step=3.987 ttft=0.392 nan=False
+2026-09-03T18:30:32Z restart K=5
+2026-09-03T18:33:52Z ready K=5 in 200s
+(APIServer pid=1) INFO 09-03 18:30:50 [api_utils.py:273] non-default args: {'model_tag': '/model', 'chat_template': '/opt/glm53/chat_template.jinja', 'enable_auto_tool_choice': True, 'tool_call_parser': 'glm47', 'host': '127.0.0.1', 'port': 18080, 'model': '/model', 'max_model_len': 262144, 'quantization': 'exl3', 'served_model_name': ['GLM-5.3-Flash-EXL3-2.05'], 'reasoning_parser': 'glm45', 'gpu_memory_utilization': 0.9, 'kv_cache_dtype': 'fp8', 'enable_prefix_caching': True, 'limit_mm_per_prompt': {'image': 2, 'video': 0}, 'skip_mm_profiling': True, 'max_num_batched_tokens': 7168, 'max_num_seqs': 4, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32], 'enable_flashinfer_autotune': False, 'speculative_config': {'method': 'dflash', 'model': '/draft', 'num_speculative_tokens': 5, 'kv_cache_dtype': 'auto', 'draft_sample_method': 'probabilistic', 'rejection_sample_method': 'standard', 'draft_tensor_parallel_size': 1}}
+(APIServer pid=1) INFO 09-03 18:30:53 [speculative.py:1256] Overriding draft model max model len from 1048576 to 262144
+(APIServer pid=1) WARNING 09-03 18:30:53 [vllm.py:1849] max_num_scheduled_tokens is set to 7168 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens.
+2026-09-03T18:33:57Z bench K=5 (sweep)
+RESULT K=5 sweep median=53.47 min=52.70 max=53.59 accept=0.9882 acc/step=4.941 ttft=0.387 nan=False
+2026-09-03T18:34:23Z restart K=6
+2026-09-03T18:37:38Z ready K=6 in 195s
+(APIServer pid=1) INFO 09-03 18:34:41 [api_utils.py:273] non-default args: {'model_tag': '/model', 'chat_template': '/opt/glm53/chat_template.jinja', 'enable_auto_tool_choice': True, 'tool_call_parser': 'glm47', 'host': '127.0.0.1', 'port': 18080, 'model': '/model', 'max_model_len': 262144, 'quantization': 'exl3', 'served_model_name': ['GLM-5.3-Flash-EXL3-2.05'], 'reasoning_parser': 'glm45', 'gpu_memory_utilization': 0.9, 'kv_cache_dtype': 'fp8', 'enable_prefix_caching': True, 'limit_mm_per_prompt': {'image': 2, 'video': 0}, 'skip_mm_profiling': True, 'max_num_batched_tokens': 7168, 'max_num_seqs': 4, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32], 'enable_flashinfer_autotune': False, 'speculative_config': {'method': 'dflash', 'model': '/draft', 'num_speculative_tokens': 6, 'kv_cache_dtype': 'auto', 'draft_sample_method': 'probabilistic', 'rejection_sample_method': 'standard', 'draft_tensor_parallel_size': 1}}
+(APIServer pid=1) INFO 09-03 18:34:44 [speculative.py:1256] Overriding draft model max model len from 1048576 to 262144
+(APIServer pid=1) WARNING 09-03 18:34:44 [vllm.py:1849] max_num_scheduled_tokens is set to 7168 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens.
+2026-09-03T18:37:43Z bench K=6 (sweep)
+RESULT K=6 sweep median=59.20 min=59.18 max=59.25 accept=0.9856 acc/step=5.914 ttft=0.496 nan=False
+2026-09-03T18:38:07Z restart K=8
+2026-09-03T18:41:28Z ready K=8 in 201s
+(APIServer pid=1) INFO 09-03 18:38:25 [api_utils.py:273] non-default args: {'model_tag': '/model', 'chat_template': '/opt/glm53/chat_template.jinja', 'enable_auto_tool_choice': True, 'tool_call_parser': 'glm47', 'host': '127.0.0.1', 'port': 18080, 'model': '/model', 'max_model_len': 262144, 'quantization': 'exl3', 'served_model_name': ['GLM-5.3-Flash-EXL3-2.05'], 'reasoning_parser': 'glm45', 'gpu_memory_utilization': 0.9, 'kv_cache_dtype': 'fp8', 'enable_prefix_caching': True, 'limit_mm_per_prompt': {'image': 2, 'video': 0}, 'skip_mm_profiling': True, 'max_num_batched_tokens': 7168, 'max_num_seqs': 4, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32], 'enable_flashinfer_autotune': False, 'speculative_config': {'method': 'dflash', 'model': '/draft', 'num_speculative_tokens': 8, 'kv_cache_dtype': 'auto', 'draft_sample_method': 'probabilistic', 'rejection_sample_method': 'standard', 'draft_tensor_parallel_size': 1}}
+(APIServer pid=1) INFO 09-03 18:38:28 [speculative.py:1256] Overriding draft model max model len from 1048576 to 262144
+(APIServer pid=1) WARNING 09-03 18:38:28 [vllm.py:1849] max_num_scheduled_tokens is set to 7168 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens.
+2026-09-03T18:41:34Z bench K=8 (sweep)
+RESULT K=8 sweep median=66.85 min=65.00 max=66.92 accept=0.962 acc/step=7.696 ttft=0.519 nan=False
+2026-09-03T18:41:55Z restart K=7
+2026-09-03T18:45:09Z ready K=7 in 194s
+(APIServer pid=1) INFO 09-03 18:42:14 [api_utils.py:273] non-default args: {'model_tag': '/model', 'chat_template': '/opt/glm53/chat_template.jinja', 'enable_auto_tool_choice': True, 'tool_call_parser': 'glm47', 'host': '127.0.0.1', 'port': 18080, 'model': '/model', 'max_model_len': 262144, 'quantization': 'exl3', 'served_model_name': ['GLM-5.3-Flash-EXL3-2.05'], 'reasoning_parser': 'glm45', 'gpu_memory_utilization': 0.9, 'kv_cache_dtype': 'fp8', 'enable_prefix_caching': True, 'limit_mm_per_prompt': {'image': 2, 'video': 0}, 'skip_mm_profiling': True, 'max_num_batched_tokens': 7168, 'max_num_seqs': 4, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32], 'enable_flashinfer_autotune': False, 'speculative_config': {'method': 'dflash', 'model': '/draft', 'num_speculative_tokens': 7, 'kv_cache_dtype': 'auto', 'draft_sample_method': 'probabilistic', 'rejection_sample_method': 'standard', 'draft_tensor_parallel_size': 1}}
+(APIServer pid=1) INFO 09-03 18:42:16 [speculative.py:1256] Overriding draft model max model len from 1048576 to 262144
+(APIServer pid=1) WARNING 09-03 18:42:17 [vllm.py:1849] max_num_scheduled_tokens is set to 7168 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens.
+2026-09-03T18:45:14Z bench K=7 (restored)
+RESULT K=7 restored median=62.17 min=61.95 max=64.91 accept=0.9615 acc/step=6.731 ttft=0.514 nan=False
+2026-09-03T18:45:37Z DONE
+EXIT=0

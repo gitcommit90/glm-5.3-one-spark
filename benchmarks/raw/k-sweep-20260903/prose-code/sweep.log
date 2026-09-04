@@ -1,0 +1,37 @@
+2026-09-03T19:06:55Z bench K=7 prose
+RESULT K=7 prose median=25.83 min=24.27 max=28.80 accept=0.3267 acc/step=2.287 step_ms=127.3 ttft=0.532 nan=False
+2026-09-03T19:07:43Z bench K=7 code
+RESULT K=7 code median=38.31 min=34.75 max=39.11 accept=0.5732 acc/step=4.013 step_ms=130.9 ttft=0.625 nan=False
+2026-09-03T19:08:18Z restart K=4
+2026-09-03T19:11:32Z ready K=4 in 194s
+num_spec_tokens=4
+2026-09-03T19:11:37Z bench K=4 prose
+RESULT K=4 prose median=28.79 min=27.79 max=31.85 accept=0.4963 acc/step=1.985 step_ms=103.7 ttft=0.403 nan=True
+2026-09-03T19:12:20Z bench K=4 code
+RESULT K=4 code median=37.65 min=35.82 max=38.57 accept=0.7376 acc/step=2.95 step_ms=104.9 ttft=0.490 nan=False
+2026-09-03T19:12:54Z restart K=5
+2026-09-03T19:16:11Z ready K=5 in 197s
+num_spec_tokens=5
+2026-09-03T19:16:16Z bench K=5 prose
+RESULT K=5 prose median=29.87 min=29.10 max=30.29 accept=0.4595 acc/step=2.298 step_ms=110.4 ttft=0.507 nan=False
+2026-09-03T19:16:59Z bench K=5 code
+RESULT K=5 code median=40.09 min=38.09 max=40.40 accept=0.7195 acc/step=3.598 step_ms=114.7 ttft=0.589 nan=False
+2026-09-03T19:17:31Z restart K=6
+2026-09-03T19:20:46Z ready K=6 in 195s
+num_spec_tokens=6
+2026-09-03T19:20:52Z bench K=6 prose
+RESULT K=6 prose median=29.03 min=28.90 max=29.60 accept=0.4095 acc/step=2.457 step_ms=119.1 ttft=0.528 nan=True
+2026-09-03T19:21:35Z bench K=6 code
+RESULT K=6 code median=37.45 min=34.73 max=38.99 accept=0.6073 acc/step=3.644 step_ms=124.0 ttft=0.607 nan=False
+2026-09-03T19:22:10Z restart K=8
+2026-09-03T19:25:30Z ready K=8 in 200s
+num_spec_tokens=8
+2026-09-03T19:25:35Z bench K=8 prose
+RESULT K=8 prose median=23.94 min=20.32 max=25.69 accept=0.2782 acc/step=2.226 step_ms=134.8 ttft=0.550 nan=False
+2026-09-03T19:26:30Z bench K=8 code
+RESULT K=8 code median=38.02 min=35.86 max=38.42 accept=0.5417 acc/step=4.333 step_ms=140.3 ttft=0.648 nan=False
+2026-09-03T19:27:05Z restart K=7
+2026-09-03T19:30:18Z ready K=7 in 193s
+num_spec_tokens=7
+2026-09-03T19:30:23Z DONE
+EXIT=0

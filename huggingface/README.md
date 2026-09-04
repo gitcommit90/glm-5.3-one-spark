@@ -21,10 +21,10 @@ quantized_by: turboderp
 A reproducible, production-capable deployment of **GLM-5.3-Flash on one NVIDIA DGX Spark**, using:
 
 - [Turboderp's 2.05-bpw EXL3 checkpoint](https://huggingface.co/turboderp/GLM-5.3-Flash-exl3/tree/2.05bpw)
-- [Inco AI's DFlash2 K7 drafter](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2)
+- [Inco AI's DFlash2 drafter (K5 default)](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2)
 - A TP1 ARM64/SM121 vLLM runtime derived from [MiaAI's two-Spark recipe](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks)
 
-> **64.1 tok/s structured C1 · 25.1 tok/s prose · 181.9 tok/s C4 active-stream aggregate · 262K context**
+> **64.1 tok/s structured C1 (K7) · 29.9 tok/s prose / 40.1 tok/s code (K5 default) · 181.9 tok/s C4 active-stream aggregate · 262K context**
 
 ## This repository does not contain model weights
 
@@ -32,7 +32,7 @@ This is a **deployment/runtime discovery page**, not a new model or quant. The s
 
 ## Measured results
 
-One DGX Spark, TP1, EXL3 2.05 bpw, DFlash2 K7, FP8 KV, thinking disabled:
+One DGX Spark, TP1, EXL3 2.05 bpw, DFlash2 K7 (default at collection time; shipped default is now K5), FP8 KV, thinking disabled:
 
 | Benchmark | Result |
 |---|---:|
@@ -44,6 +44,20 @@ One DGX Spark, TP1, EXL3 2.05 bpw, DFlash2 K7, FP8 KV, thinking disabled:
 | C4 strict submission-to-completion wall | **91.475 tok/s** |
 
 **C4 disclosure:** 181.944 tok/s is the sum of each stream's active decode rate, matching MiaAI's reporting convention. Because the current scheduler stages admission, strict full-batch wall throughput is 91.475 tok/s. Both numbers are published intentionally.
+
+## Speculative depth (K) sweep
+
+Default `num_speculative_tokens` moved from 7 to **5** on 2026-09-03. Spec decode is lossless; K only changes speed. Temperature 0, thinking off, 400 tokens, C1:
+
+| K | Structured | Prose | Code |
+|--:|---:|---:|---:|
+| 4 | 48.6 tok/s | 28.8 | 37.7 |
+| **5 (default)** | 53.5 | **29.9** | **40.1** |
+| 6 | 59.2 | 29.0 | 37.5 |
+| 7 | 63.9 | 25.8 | 38.3 |
+| 8 | **66.9** | 23.9 | 38.0 |
+
+Use K=8 for list/JSON-heavy workloads (`ONE_SPARK_K=8`). Raw data in the GitHub repo under `benchmarks/raw/k-sweep-20260903`.
 
 ## Long-context results
 

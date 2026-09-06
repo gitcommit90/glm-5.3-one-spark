@@ -66,6 +66,33 @@ An [independent full-vocabulary measurement](https://github.com/malaiwah/quant-f
 
 The measurement used 25 windows, the full 154,880-token vocabulary, teacher forcing, FP64 accumulation, and two cold runs with identical results. The checkpoint was quantized from the official FP8 release; the measurement reference is BF16. Machine-readable summary: [`benchmarks/quality/quantization-analysis.json`](benchmarks/quality/quantization-analysis.json).
 
+## Single-Spark memory budget, prefix-cache fix, and runtime knobs (2026-09-06)
+
+Findings from running this recipe as a daily driver on one DGX Spark (details, numbers and repro scripts:
+[issue #3](https://github.com/gitcommit90/glm-5.3-one-spark/issues/3), upstream bug
+[vllm-project/vllm#55600](https://github.com/vllm-project/vllm/issues/55600)):
+
+- **`--gpu-memory-utilization 0.90` leaves the host ~6 GB.** On GB10 the GPU pool is the OS RAM; the first
+  real request allocates ~4–7 GB outside the profiler budget (JIT, allocator growth) and the NVIDIA driver
+  starts failing page-table allocations (`NV_ERR_NO_MEMORY` → `Xid 31` or a hung engine with a thrashing host).
+  `--memory` on the container does not help (GPU allocations are not charged to the cgroup).
+- **Where the KV goes at 262k:** context is 37 blocks (1.9 GiB); the DFlash2 drafter's padded 64-token blocks
+  reserve 257 blocks (13 GiB) with async scheduling. `ONE_SPARK_ASYNC=0` + `ONE_SPARK_DRAFT_BLOCK=1024` +
+  `GLM53_INDEXER_WORKSPACE=rightsize` bring the single-request need from 16.3 GiB to 3.9 GiB, so
+  `ONE_SPARK_UTIL=0.80` serves 262144 (2.6×) or 524288 (1.7×) with ~20 GB host headroom, decode/prefill unchanged.
+- **Prefix-cache hits of ≥ 8 mamba blocks crashed the engine** (upstream vLLM seed bug, see above);
+  `ONE_SPARK_MAMBA_SEED_FIX=1` (default) patches it at container start. With it, warm requests at 100k–450k
+  return the same answers as cold, TTFT 8.7 s vs 139 s at 100k.
+
+Example of the measured-safe single-Spark configuration:
+
+```bash
+ONE_SPARK_UTIL=0.80 ONE_SPARK_CTX=524288 ONE_SPARK_SEQS=1 ONE_SPARK_ASYNC=0 ONE_SPARK_DRAFT_BLOCK=1024 \
+GLM53_INDEXER_WORKSPACE=rightsize ./start.sh
+```
+
+All knobs default to the shipped behaviour except the seed fix, which is on by default.
+
 ## What this project contributes
 
 The two-Spark work by [Mia's AI Lab](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks) established the vLLM/EXL3/DFlash foundation. This project adapts and extends that foundation for a very different target:

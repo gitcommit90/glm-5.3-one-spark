@@ -13,6 +13,13 @@ This is a **deployment/runtime recipe**, not a new model or quantization. Model 
 Hugging Face discovery page: https://huggingface.co/gitcommit90/GLM-5.3-Flash-EXL3-2.05-One-Spark
 Hugging Face Collection: https://huggingface.co/collections/gitcommit90/glm-53-one-spark-6a98b70df9981ae425acbc05
 
+## Benchmark visualization
+
+[![Publication-style benchmark summary](figures/benchmark-summary.png)](figures/benchmark-summary.pdf)
+
+The figure is generated from this repository's measured results with [`figures/plot_benchmarks.py`](figures/plot_benchmarks.py), following the publication-figure conventions from [figures4papers](https://github.com/ChenLiu-1996/figures4papers). The PNG is optimized for GitHub; click it for the vector PDF.
+
+
 ## Headline results
 
 One DGX Spark (GB10, 128 GB unified memory), TP1, EXL3 2.05 bpw, DFlash2 **K7** (the default at the time these were collected; shipped default is now K5, see below), FP8 KV, thinking off, direct vLLM backend:

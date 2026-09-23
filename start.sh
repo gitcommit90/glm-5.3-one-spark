@@ -41,10 +41,13 @@ docker run -d --name "$CONTAINER" --gpus all --network host --ipc=host \
   -e EXL3_FAT_KERNEL=1 \
   -e GLM53_SUPPRESS_STOPS_IN_REASONING=1 \
   -e GLM53_MIXED_PREFILL_CHUNK=skip \
-  -e GLM53_INDEXER_WORKSPACE=stock \
+  -e GLM53_INDEXER_WORKSPACE="${GLM53_INDEXER_WORKSPACE:-stock}" \
   -e GLM53_SPINWAIT_MS=stock \
   -e VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS=1800 \
   -e ONE_SPARK_HOST="$HOST" -e ONE_SPARK_PORT="$PORT" -e ONE_SPARK_K="${ONE_SPARK_K:-5}" \
+  -e ONE_SPARK_CTX="${ONE_SPARK_CTX:-262144}" -e ONE_SPARK_UTIL="${ONE_SPARK_UTIL:-0.90}" -e ONE_SPARK_SEQS="${ONE_SPARK_SEQS:-4}" \
+  -e ONE_SPARK_MNBT="${ONE_SPARK_MNBT:-7168}" -e ONE_SPARK_ASYNC="${ONE_SPARK_ASYNC:-}" -e ONE_SPARK_APC="${ONE_SPARK_APC:-1}" \
+  -e ONE_SPARK_DRAFT_BLOCK="${ONE_SPARK_DRAFT_BLOCK:-}" -e ONE_SPARK_MAMBA_SEED_FIX="${ONE_SPARK_MAMBA_SEED_FIX:-1}" \
   -v "$MODEL_DIR:/model:ro" -v "$DFLASH_DIR:/draft:ro" \
   -v "$ROOT/scripts/serve-one-spark.sh:/start.sh:ro" \
   -v "${CACHE_ROOT:-$HOME/.cache/glm53-one-spark}/vllm:/root/.cache/vllm" \

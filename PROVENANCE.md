@@ -24,3 +24,5 @@ Important additive One-Spark files include:
 The packaged target weights are not modified by this project. They are downloaded from Turboderp's official 2.05-bpw branch. The DFlash2 weights are not modified or redistributed and remain hosted by Inco AI.
 
 The runtime also contains source-exact behavioral backports from vLLM PRs #52805 and #53046, identified in `overlay/patch_xgrammar_termination.py`, and a vLLM-derived `qwen3_dflash2.py` marked Apache-2.0.
+
+`overlay/patch_kpool_vllm_backports.py` backports the k-pool tail fixes from vLLM PRs #57477 (Jared Wen) and #58454 (Matt Mastracci), both Apache-2.0, adapted to the pinned base image's tail-cache layout.

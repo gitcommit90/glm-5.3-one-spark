@@ -457,6 +457,8 @@ COPY overlay/patch_xgrammar_termination.py /opt/glm53/patch_xgrammar_termination
 COPY tests/test_xgrammar_termination.py /opt/glm53/test_xgrammar_termination.py
 COPY overlay/patch_kpool_tail_slotmap.py /opt/glm53/patch_kpool_tail_slotmap.py
 COPY tests/test_kpool_tail_slotmap.py /opt/glm53/test_kpool_tail_slotmap.py
+COPY overlay/patch_kpool_vllm_backports.py /opt/glm53/patch_kpool_vllm_backports.py
+COPY tests/test_kpool_vllm_backports.py /opt/glm53/test_kpool_vllm_backports.py
 COPY overlay/patch_spinwait.py /opt/glm53/patch_spinwait.py
 COPY tests/test_spinwait_patch.py /opt/glm53/test_spinwait_patch.py
 COPY overlay/patch_indexer_workspace.py /opt/glm53/patch_indexer_workspace.py
@@ -481,6 +483,9 @@ RUN python3 /opt/glm53/patch_scheduler_decode_floor.py
 RUN python3 /opt/glm53/patch_hybrid_prefix_hit.py
 RUN python3 /opt/glm53/patch_xgrammar_termination.py
 RUN python3 /opt/glm53/patch_kpool_tail_slotmap.py
+# Backports vLLM #57477 (prefill tail seed honours the padded tail stride) and #58454
+# (tail ring survives rejected speculative drafts); the pinned base predates both.
+RUN python3 /opt/glm53/patch_kpool_vllm_backports.py
 # Applied unconditionally; the injected sizing reads GLM53_INDEXER_WORKSPACE
 # at runtime and returns the stock expression unless it is "rightsize".
 RUN python3 /opt/glm53/patch_indexer_workspace.py
